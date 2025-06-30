@@ -262,6 +262,7 @@ const Home = () => {
     const payload = {
       name,
       email: contactEmail,
+      phoneNumber: phoneNumber,
       message,
     };
 
@@ -273,7 +274,8 @@ const Home = () => {
         },
         body: JSON.stringify(payload),
       });
-
+      console.log("Submitting contact form...", payload);
+      ``;
       const data = await response.json();
 
       if (response.ok) {
@@ -710,10 +712,11 @@ const Home = () => {
               <div className="intcontent">
                 <h3 className="intcard-title">MARKETING</h3>
                 <p className="intcard-description">
-                  Dive into the world of digital marketing, social media
-                  campaigns, and brand strategy. Learn to create compelling
-                  content, analyze market trends, and develop innovative
-                  marketing solutions that drive business growth.
+                  Brainstorms hooks faster than TikTok trends-driving campaigns,
+                  growing communities, and turning scrollers into confident
+                  traders. Handles copywriting, social posts, email funnels,
+                  light ad tweaks, and community engagement on Discord and
+                  Facebook. Checks the data to answer: “Did that reel convert?”
                 </p>
                 <div className="intbutton-container">
                   <button
@@ -728,12 +731,13 @@ const Home = () => {
 
             <div className="intcard">
               <div className="intcontent">
-                <h3 className="intcard-title">IT</h3>
+                <h3 className="intcard-title">IT DEPARTMENT</h3>
                 <p className="intcard-description">
-                  Explore cutting-edge technology, software development, and
-                  system administration. Gain hands-on experience with
-                  programming languages, database management, and cybersecurity
-                  while working on real-world projects.
+                  Thinks in Python, dreams in SQL, and debugs in their sleep.
+                  Builds trading dashboards, APIs, and features for 8ConEdge.
+                  Works on front-end tweaks (React, Next, or Vue), scripts data
+                  feeds, maintains servers, runs security checks, and automates
+                  tasks to streamline trading workflows.
                 </p>
                 <div className="intbutton-container">
                   <button
@@ -750,10 +754,11 @@ const Home = () => {
               <div className="intcontent">
                 <h3 className="intcard-title">ACCOUNTING</h3>
                 <p className="intcard-description">
-                  Master financial analysis, bookkeeping, and tax preparation.
-                  Learn industry-standard accounting software, financial
-                  reporting, and budgeting while supporting our finance team
-                  with day-to-day operations.
+                  Spreadsheets sing under their fingertips. Keeps ledgers clean
+                  while linking PIPs to P&L. Manages daily bookkeeping, tracks
+                  costs for events and courses, builds reports management
+                  actually reads, and forecasts budgets with precision and yes,
+                  macros-making every number count behind the scenes.
                 </p>
                 <div className="intbutton-container">
                   <button
@@ -770,10 +775,11 @@ const Home = () => {
               <div className="intcontent">
                 <h3 className="intcard-title">MULTIMEDIA</h3>
                 <p className="intcard-description">
-                  Join our team and support the development of engaging visual
-                  and audiovisual content across digital platforms. This role is
-                  ideal for students or recent graduates passionate about
-                  storytelling, design, and digital media production.
+                  Camera roll is 90% B-roll. Shoots, edits, and animates nonstop
+                  to make forex visually unforgettable. Cuts short-form content
+                  like Reels and YouTube Shorts, adds motion graphics and lower
+                  thirds, captures event photos, and designs branded assets that
+                  stand out across every feed.
                 </p>
                 <div className="intbutton-container">
                   <button
@@ -964,9 +970,10 @@ const Home = () => {
               <div className="career-content">
                 <h3 className="career-title">FUNDED TRADER</h3>
                 <p className="career-description">
-                  Become a professionally funded trader by mastering advanced
-                  strategies, risk management, and trading psychology. Unlock
-                  the opportunity to trade real capital and grow your portfolio.
+                  Trade big. Risk none. Show consistency and confidence in your
+                  trading plan to qualify for real capital. Pass internal
+                  reviews, psychology evaluation, and mock account tests.
+                  Mentorship included no fluff, no random signups.
                 </p>
               </div>
             </div>
@@ -975,21 +982,22 @@ const Home = () => {
               <div className="career-content">
                 <h3 className="career-title">WORKSHOP SPEAKER</h3>
                 <p className="career-description">
-                  Share your expertise with aspiring traders through interactive
-                  sessions. Inspire and educate by delivering impactful
-                  workshops on forex, finance, and personal development.
+                  You learned with Confluence now you teach it. As a certified
+                  Forex Coach, lead classes, mentor juniors, and guide new
+                  traders. Qualification: core competency completion, coaching
+                  evaluation, and a mock teaching session.
                 </p>
               </div>
             </div>
 
             <div className="career-card">
               <div className="career-content">
-                <h3 className="career-title">FOREX COACH</h3>
+                <h3 className="career-title">FOREX INSTRUCTOR</h3>
                 <p className="career-description">
-                  Guide new learners through their trading journey. Provide
-                  mentorship, personalized feedback, and help them develop
-                  consistent strategies for long-term success in the forex
-                  market.
+                  You learned with Confluence now you teach it. As a certified
+                  Forex Coach, lead classes, mentor juniors, and guide new
+                  traders. Qualification: core competency completion, coaching
+                  evaluation, and a mock teaching session.
                 </p>
               </div>
             </div>
@@ -998,11 +1006,10 @@ const Home = () => {
               <div className="career-content">
                 <h3 className="career-title">8CON FRANCHISEE</h3>
                 <p className="career-description">
-                  Take your entrepreneurial journey to the next level by owning
-                  an 8CON franchise. You'll gain access to a proven business
-                  model, ongoing support, and exclusive tools to build a
-                  thriving training center and inspire the next generation of
-                  traders.
+                  Your own trading hub-powered by 8Con. Franchise opportunities
+                  are open to homegrown traders who embody our system, values,
+                  and standards. Qualification: full course graduate, business
+                  mentorship track, and completed operations training.
                 </p>
               </div>
             </div>
@@ -1092,6 +1099,39 @@ const Home = () => {
                     onChange={(e) =>
                       setContactEmail(capitalizeFirstLetter(e.target.value))
                     }
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="number" className="form-label">
+                    Number
+                  </label>
+                  <input
+                    className="form-input"
+                    type="tel"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={phoneNumber}
+                    onFocus={() => {
+                      if (phoneNumber === "") {
+                        setPhoneNumber("+639");
+                      }
+                    }}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      const digitsOnly = input.replace(/\D/g, "");
+                      // Ensure it starts with "639"
+                      if (!digitsOnly.startsWith("639")) {
+                        setPhoneNumber("+639");
+                        return;
+                      }
+                      // Extract only up to 10 digits after "639"
+                      const rest = digitsOnly.slice(3, 13);
+                      setPhoneNumber(`+639${rest}`);
+                    }}
+                    placeholder="+639XXXXXXXXX"
+                    title="Enter a valid Philippine phone number (e.g. +639123456789). Only 10 digits after +63."
+                    maxLength={13} // Total: +639XXXXXXXXX
+                    required
                   />
                 </div>
                 <div className="form-group">
