@@ -255,7 +255,7 @@ const Home = () => {
     }
   };
 
-  // End of Modal
+  // End of Modal ni moran
   const handleContactSubmit = async (e) => {
     e.preventDefault(); // prevents default form submission behavior
 
