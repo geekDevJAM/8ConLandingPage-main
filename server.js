@@ -38,7 +38,10 @@ app.post("/contact", async (req, res) => {
     service: "gmail",
     auth: {
       user: "staff.8conacademy@gmail.com",
-      pass: "cozy kcsi qzkc ewfp", // App Password from Gmail
+      pass: "cozy kcsi qzkc ewfp", // Gmail App Password
+    },
+    tls: {
+      rejectUnauthorized: false, // 👈 Add this line
     },
   });
 
@@ -84,7 +87,10 @@ app.post("/apply", upload.single("resumeFile"), async (req, res) => {
     service: "gmail",
     auth: {
       user: "staff.8conacademy@gmail.com",
-      pass: "cozy kcsi qzkc ewfp", // use an App Password or secure auth
+      pass: "cozy kcsi qzkc ewfp", // Gmail App Password
+    },
+    tls: {
+      rejectUnauthorized: false, // 👈 Add this line
     },
   });
 

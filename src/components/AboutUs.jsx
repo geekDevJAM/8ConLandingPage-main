@@ -75,7 +75,13 @@ const AboutUs = () => {
       <main className="about-us-main">
         {/* Hero Section with Background Image */}
         <section className="about-us-hero">
-          <div className="about-us-hero-overlay"></div>
+          <div className="about-us-hero-overlay">
+            <img
+              src="/assets/images/aboutus.jpg"
+              alt="8Con Academy Logo"
+              className="header-AboutUs"
+            />
+          </div>
         </section>
         <section>
           {/* Content Container */}
@@ -95,82 +101,233 @@ const AboutUs = () => {
                   </h2>
                 </div>
                 <p className="about-us-card-text justified-text">
-                  8Con Academy is a premier trading and financial education
-                  institution based in Meycauayan, Bulacan. We specialize in
-                  Forex Derivative Education, empowering aspiring traders
-                  through structured, confluence-based strategies — rooted in
-                  discipline, real-world practice, and continuous coaching.
+                  <span className="text-red-highlight">8Con Academy</span> is a
+                  premier trading and financial education institution based in
+                  Meycauayan, Bulacan. We specialize in{" "}
+                  <span className="text-red-highlight">
+                    Forex Derivative Education
+                  </span>
+                  , empowering aspiring traders through structured,
+                  confluence-based strategies rooted in discipline, real-world
+                  practice, and continuous coaching.
                 </p>
-                <p className="about-us-card-text justified-text">
+                <br />
+                <p>
                   At 8Con, we believe that Confluence Builds Confidence. Our
-                  name, “8Con,” reflects the 8 key confluences traders must
-                  master to make sound, profitable decisions, a philosophy that
-                  runs through every program we offer.
+                  name, <span className="text-red-highlight">8Con</span>{" "}
+                  reflects the 8 key confluences traders must master to make
+                  sound, profitable decisions, a philosophy that runs through
+                  every program we offer.
                 </p>
+
                 <h3 className="about-us-card-subtitle">Our Services</h3>
+                <p className="about-us-card-text justified-text">
+                  <strong>Sub-brands:</strong>
+                </p>
                 <ul className="about-us-card-text justified-list">
                   <li className="justified-text">
                     <p>
-                      <strong>Beginner to Advanced Courses:</strong> From
-                      introductory forex modules to in-depth technical and
-                      fundamental analysis for advanced learners.
+                      <strong>Forex Derivative Trading Level II:</strong> An
+                      Advanced Course designed to equip students with
+                      comprehensive knowledge and hands-on skills in{" "}
+                      <span className="text-red-highlight">Forex Trading </span>
+                      to become profitable traders. decisions.
+                    </p>
+                  </li>
+                </ul>
+                <p className="about-us-card-text justified-text">
+                  <strong>Sub-brands:</strong>
+                </p>
+                <ul className="about-us-card-text justified-list sub-brand-grid">
+                  <li className="justified-text">
+                    <p>
+                      <strong>8ConEdge:</strong> Proprietary forex scanner for
+                      derivative traders. Provides market sentiment, technical
+                      signals, and fundamental analysis in one platform,
+                      empowering informed trading decisions.
                     </p>
                   </li>
                   <li className="justified-text">
                     <p>
-                      <strong>Practical Training Tools:</strong> Access to
-                      cutting-edge tools, including our proprietary trading
-                      application (8Con Edge), which supports market analysis,
-                      risk management, and strategy testing.
+                      <strong>8ConLift:</strong> Scholarship and community
+                      upliftment arm offering free education, OJT placements,
+                      and the "Enrollment to Employment" program. Focused on
+                      transforming lives through inclusive learning
+                      opportunities.
                     </p>
                   </li>
                   <li className="justified-text">
                     <p>
-                      <strong>Special Programs:</strong> The "Enrollment to
-                      Employment" initiative equips graduates with career
-                      pathways, making forex trading a viable livelihood.
+                      <strong>8ConStruct:</strong> Offers data analytics,
+                      statistical treatment, and research consulting for
+                      students, academics, and businesses led by Doc May
+                      Francisco. Ideal for theses, dissertations, market
+                      research, and business data strategies.
+                    </p>
+                  </li>
+                  <li className="justified-text">
+                    <p>
+                      <strong>8ConCise:</strong> Comprehensive review center for
+                      LET, Criminology, Civil Service, and College Entrance
+                      Exams. Combines academic content, mock exams, and coaching
+                      for exam success.
+                    </p>
+                  </li>
+                  <li className="justified-text">
+                    <p>
+                      <strong>8ConVerse:</strong> Language proficiency program
+                      designed for IELTS, TOEFL, and other English
+                      certifications. Supports global career and migration plans
+                      through effective communication skills training.
+                    </p>
+                  </li>
+                  <li className="justified-text">
+                    <p>
+                      <strong>8ConNect:</strong> Business networking community
+                      promoting collaboration, referrals, and entrepreneurial
+                      growth. Hosts pitching events, coaching, and partnerships
+                      for SMEs and local startups.
+                    </p>
+                  </li>
+                  <li className="justified-text">
+                    <p>
+                      <strong>8ConPact:</strong> CSR and LGU partnership program
+                      supporting education, livelihood, and employment.
+                      Implements LGU-aligned training, scholarships, and job
+                      placement initiatives.
+                    </p>
+                  </li>
+                  <li className="justified-text">
+                    <p>
+                      <strong>8ConQuest:</strong> Academic coaching and
+                      professional mentoring focused on thesis guidance, career
+                      planning, and entrepreneurship development. Helps students
+                      and professionals achieve academic and career goals with
+                      expert support.
+                    </p>
+                  </li>
+                  <li className="justified-text">
+                    <p>
+                      <strong>8ConSpace:</strong> A co-working and virtual
+                      office hub for freelancers, students, and startups. Offers
+                      flexible desk rentals, virtual business registration, and
+                      community workshops in a productivity-focused environment.
+                    </p>
+                  </li>
+                  <li className="justified-text">
+                    <p>
+                      <strong>8ConSult:</strong> Business development and
+                      startup advisory service led by Sir Nigel Santos. Covers
+                      business model coaching, sales strategy, growth plans, and
+                      investor pitch preparation. Advisory
                     </p>
                   </li>
                 </ul>
 
                 <h3 className="about-us-card-subtitle">What Makes Us Unique</h3>
-
+                <p className="about-us-card-text justified-text">
+                  Confluence-Based Strategy Model
+                </p>
+                <br />
+                <p>
+                  Our curriculum is built on a multi-layered framework designed
+                  to sharpen decision-making and reinforce trading discipline.
+                  Rather than relying on just one method or signal, we teach
+                  students how to identify aligned market factors or what we
+                  call confluences before taking action.
+                </p>
+                <br />
+                <p>
+                  This approach helps them avoid guesswork, manage risk better,
+                  and execute trades with confidence and clarity.
+                </p>
+                <br />
+                <p>
+                  <strong>
+                    Internship with Real Value: Interns don’t just observe they
+                    evolve. Each intern receives:
+                  </strong>
+                </p>
                 <ul className="about-us-card-text justified-list">
                   <li className="justified-text">
-                    Graduates can pursue careers as independent traders,
-                    corporate traders, trading consultants, copy trade signal
-                    providers and forex coaches.
+                    A Full Scholarship covering Basic to Common Competency.
                   </li>
                   <li className="justified-text">
-                    Future opportunities include joining 8Con Trading Hub or
-                    becoming part of our franchise system as educators or
-                    mentors.
+                    Thesis & Dissertation Coaching.
+                  </li>
+                  <li className="justified-text">1-on-1 Career Mentorship</li>
+                  <li className="justified-text">
+                    Extended Support After Graduation: Growth doesn’t stop at
+                    graduation. Our Student Satisfactory Program gives qualified
+                    graduates an extra month of access to live training, core
+                    modules, and mentorship, totally free. Whether they need
+                    confidence, clarity, or a second wind, we’ve got their back.
                   </li>
                 </ul>
-
-                <h3 className="about-us-card-subtitle">Community Engagement</h3>
-                <p className="about-us-card-text justified-text">
-                  We take a grassroots approach to financial literacy,
-                  collaborating with local government units (LGUs) and community
-                  organizations. We aim to uplift communities by promoting
-                  financial independence and responsible trading practices.
+                <br />
+                <p>
+                  <strong>8ConEdge: Proprietary Market Scanner</strong>
                 </p>
+                <br />
+                <p>
+                  We’ve developed 8ConEdge, our in-house market scanning tool
+                  built exclusively for 8Con traders and students.
+                </p>
+                <br />
+                <p>
+                  Designed to support strategic decision-making, it streamlines
+                  key market data into one intuitive dashboard giving users a
+                  smarter, more structured view of the market.
+                </p>
+                <br />
+                <p>
+                  No hype, no clutter, just a system that speaks the same
+                  language we teach: confluence, structure, and confidence.
+                </p>
+                <br />
+                <p>
+                  Because at 8Con, even our tech is trained to think like a
+                  trader.
+                </p>
+                <h3 className="about-us-card-subtitle">Community Engagement</h3>
+                <ul className="about-us-card-text justified-list">
+                  <p className="about-us-card-text justified-text">
+                    8Con Academy fosters an environment where learning continues
+                    beyond the classroom.
+                  </p>
+                  <p className="about-us-card-text justified-text">
+                    <strong>We actively build connections through:</strong>
+                  </p>
+                  <li className="justified-text">
+                    Campus workshops and speaking invitations.
+                  </li>
+                  <li className="justified-text">
+                    Free public orientations and trading webinars.
+                  </li>
+                  <li className="justified-text">
+                    Live fund management challenges.
+                  </li>
+                  <li className="justified-text">
+                    Our graduates stay involved, often returning as mentors,
+                    speakers, or collaborators. It's a shared journey built on
+                    growth, support, and accountability.
+                  </li>
+                </ul>
               </div>
               <div className="about-us-card">
                 <div className="about-us-card-header">
                   <Eye
                     size={32}
-                    style={{ color: "#0edb61" }}
+                    style={{ color: "#ff1f2c" }}
                     className="about-us-card-icon"
                   />
                   <h2 className="about-us-card-title">Our Vision</h2>
                 </div>
                 <p className="about-us-card-text justified-text">
-                  To create a profitable and financially empowered trader in
-                  every Filipino family. Through accessible education, practical
-                  tools, and community engagement, we are committed to fostering
-                  a culture of financial literacy and independence in the
-                  Philippines.
+                  To become the most trusted and recognized Forex education hub
+                  in the Philippines, producing a ripple effect of empowered
+                  traders, impactful coaches, and ethical fund managers who
+                  create lasting value in communities here and abroad.
                 </p>
               </div>
 
@@ -185,11 +342,12 @@ const AboutUs = () => {
                   <h2 className="about-us-card-title">Our Mission</h2>
                 </div>
                 <p className="about-us-card-text justified-text">
-                  To create a profitable forex trader in every Filipino
-                  household. By combining education and innovation, the academy
-                  is building a lasting legacy of empowerment, financial
-                  independence, and sustainable opportunities for individuals
-                  and communities.
+                  To raise disciplined, confident, and financially literate
+                  Filipino traders through structured education,
+                  confluence-based strategies, and career-focused coaching,
+                  supported by data-driven tools and real-world application. We
+                  are committed to creating a profitable trader in every
+                  Filipino household, one person at a time.
                 </p>
               </div>
             </div>
@@ -201,7 +359,7 @@ const AboutUs = () => {
                 <div className="about-us-card-header">
                   <Atom
                     size={32}
-                    style={{ color: "#0edb61" }}
+                    style={{ color: "#ff1f2c" }}
                     className="about-us-card-icon"
                   />
                   <h2 className="about-us-card-title">Core Values</h2>
@@ -259,18 +417,46 @@ const AboutUs = () => {
                     Corporate Social Responsibility
                   </h2>
                 </div>
-                <p className="about-us-card-text justified-text">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p className="about-us-card-text justified-text">
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse
-                  cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                  occaecat cupidatat non proident, sunt in culpa qui officia
-                  deserunt mollit anim id est laborum.
-                </p>
+                <div className="about-us-card-section">
+                  <p
+                    className="about-us-card-text justified-text"
+                    style={{
+                      textAlign: "center", // center the text inside
+                      display: "flex", // allow alignment control
+                      justifyContent: "center", // horizontal centering
+                      alignItems: "center", // vertical centering (if needed in a container)
+                    }}
+                  >
+                    We believe that trading is a tool for transformation.
+                  </p>
+                  <p className="about-us-card-text justified-text">
+                    <strong>That’s why we support:</strong>
+                  </p>
+                  <ul className="about-us-card-text justified-list">
+                    <li className="justified-text">
+                      <p>
+                        Free educational outreach in public universities and
+                        barangays.
+                      </p>
+                    </li>
+                    <li className="justified-text">
+                      <p>Scholarships for marginalized but talented youth.</p>
+                    </li>
+                    <li className="justified-text">
+                      <p>Mental health and psychology talks for traders.</p>
+                    </li>
+                    <li className="justified-text">
+                      <p>
+                        Community business mentorships for aspiring
+                        entrepreneurs.
+                      </p>
+                    </li>
+                  </ul>
+                  <p className="about-us-card-text justified-text">
+                    Our commitment is to multiply impact, one student, one
+                    family, and one community at a time.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

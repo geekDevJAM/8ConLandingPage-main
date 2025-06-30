@@ -778,7 +778,7 @@ const Home = () => {
                 <div className="intbutton-container">
                   <button
                     className="intapply-btn"
-                    onClick={() => handleApplyClick("Accounting")}
+                    onClick={() => handleApplyClick("Multimedia")}
                   >
                     APPLY NOW
                   </button>
