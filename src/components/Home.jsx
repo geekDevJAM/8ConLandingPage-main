@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Link } from "react-router-dom";
 import SubBrand from "./SubBrand";
-import ScrollUp from "../ScrollUp";
+import ScrollUp from "./ScrollUp";
 import AboutUs from "./AboutUs";
 
 // import EightConStruct from "./components/EightConStruct";
@@ -52,25 +52,23 @@ const FAQItem = ({ question, answer }) => {
 };
 
 const Home = () => {
-  const size = useWindowSize();
-  const isMobile = size.width <= 480;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileSubBrandsDropdownOpen, setMobileSubBrandsDropdownOpen] =
-    useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   //Modal
   const [showModal, setShowModal] = useState();
   const [selectedPosition, setSelectedPosition] = useState("");
-
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
   // Form state
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("+63");
   const [resumeFile, setResumeFile] = useState(null);
-
+  const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
   const handleResumeChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -92,22 +90,22 @@ const Home = () => {
     {
       image: "/assets/images/image.png",
       text: "Thanks to 8Con Academy, I went from a beginner to a confident trader with consistent profits!",
-      author: "Maria, Graduate",
+      author: "Jhames, Graduate",
     },
     {
       image: "/assets/images/image.png",
       text: "The Enrollment to Employment program helped me get hired immediately after the course.",
-      author: "Juan, Alumni",
+      author: "CJ, Alumni",
     },
     {
       image: "/assets/images/image.png",
       text: "The comprehensive curriculum and hands-on training gave me the confidence to start my own trading business.",
-      author: "Sarah, Entrepreneur",
+      author: "Grace, Entrepreneur",
     },
     {
       image: "/assets/images/image.png",
       text: "8Con Academy's mentorship program helped me develop not just trading skills but also financial discipline.",
-      author: "Miguel, Professional Trader",
+      author: "Ryan, Professional Trader",
     },
     {
       image: "/assets/images/image.png",
@@ -143,10 +141,11 @@ const Home = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleContactSubmit = (e) => {
-    e.preventDefault();
-    alert("Thank you for your message! We will get back to you soon.");
-  };
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Scroll to Top Button
 
   const faqs = [
@@ -225,61 +224,69 @@ const Home = () => {
     setLastName("");
     setPhoneNumber("+63");
   };
-  // 👇 ADD THIS AT THE TOP of your file (below imports)
-  function useWindowSize() {
-    const [windowSize, setWindowSize] = useState({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
 
-    useEffect(() => {
-      function handleResize() {
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      }
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("firstName", firstName);
+    formData.append("middleName", middleName);
+    formData.append("lastName", lastName);
+    formData.append("email", email);
+    formData.append("address", address);
+    formData.append("phoneNumber", phoneNumber);
+    formData.append("resumeFile", resumeFile);
+    formData.append("selectedPosition", selectedPosition);
 
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    try {
+      const res = await fetch("http://localhost:3001/apply", {
+        method: "POST",
+        body: formData,
+      });
 
-    return windowSize;
-  }
-
-  const handleSubmit = () => {
-    if (!resumeFile) {
-      alert("Please upload your resume before submitting.");
-      return;
-    }
-    // Handle form submission here
-    console.log("Form submitted for position:", selectedPosition);
-    // You can add your form submission logic here
-    handleCloseModal();
-  };
-  // End of Modal
-  useEffect(() => {
-    const handleScroll = () => {
-      const header = document.querySelector(".header");
-      if (window.scrollY > 0) {
-        header.classList.add("scrolled");
+      const result = await res.json();
+      if (res.ok) {
+        alert(result.message);
+        handleCloseModal();
       } else {
-        header.classList.remove("scrolled");
+        alert(result.error || "Application failed");
       }
+    } catch (error) {
+      console.error(error);
+      alert("Submission error");
+    }
+  };
+
+  // End of Modal ni moran
+  const handleContactSubmit = async (e) => {
+    e.preventDefault(); // prevents default form submission behavior
+
+    const payload = {
+      name,
+      email: contactEmail,
+      message,
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
-  useEffect(() => {
-    if (!isAutoPlaying) return;
+    try {
+      const response = await fetch("http://localhost:3001/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
+      const data = await response.json();
 
-    return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+      if (response.ok) {
+        alert("Message sent successfully!");
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      alert("Something went wrong.");
+    }
+  };
+
   return (
     <div className="app-container">
       <main className="main-content">
@@ -338,13 +345,6 @@ const Home = () => {
                 About Us
               </Link>
             </nav>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="mobile-menu-toggle"
-              aria-label="Toggle mobile menu"
-            >
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
           </div>
 
           {/* Mobile menu */}
@@ -366,21 +366,21 @@ const Home = () => {
               >
                 Core Brands
               </a>
-              <Link
-                to="/sub-brands"
+              <a
+                href="#sub-brands"
                 className="mobile-nav-link"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Sub-brands
-              </Link>
+              </a>
 
-              {/* <a
+              <a
                 href="#news"
                 className="mobile-nav-link"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Newsletters
-              </a> */}
+              </a>
 
               {/* Careers Dropdown */}
               <a
@@ -481,22 +481,23 @@ const Home = () => {
           className="section section-cream core-brand-section"
         >
           <div className="section-container-narrow core-brand-container">
+            <h2 className="section-title core-brand-title">
+              Forex Derivative Trading Level II
+            </h2>
+
+            {/* Flex container for core brand and testimonials */}
             <div className="core-brand-content-wrapper">
               {/* Left Side - Core Brand List */}
               <div className="core-brand-left">
-                <h2 className="section-title core-brand-title">
-                  Forex Derivative Trading Level II
-                </h2>
-
-                <p className="core-brand-description">
-                  An <span className="text-red-highlight">Advanced Course</span>{" "}
-                  designed to equip students with comprehensive knowledge and
-                  hands-on skills in{" "}
-                  <span className="text-red-highlight">Forex Trading</span> to
-                  become profitable traders.
-                </p>
-
                 <ul className="core-brand-list">
+                  <p className="core-brand-description">
+                    An{" "}
+                    <span className="text-red-highlight">Advanced Course</span>{" "}
+                    designed to equip students with comprehensive knowledge and
+                    hands-on skills in{" "}
+                    <span className="text-red-highlight">Forex Trading</span> to
+                    become profitable traders.
+                  </p>
                   <li>
                     In-depth curriculum covering market analysis, strategies,
                     and risk management.
@@ -509,13 +510,12 @@ const Home = () => {
                     Enrollment to Employment program ensuring job placement
                     assistance.
                   </li>
+                  <div className="enroll-button-container">
+                    <a href="#core-brand" className="intapply-btn">
+                      Enroll Now!
+                    </a>
+                  </div>
                 </ul>
-
-                <div className="enroll-button-container">
-                  <a href="#core-brand" className="intapply-btn">
-                    Enroll Now!
-                  </a>
-                </div>
               </div>
 
               {/* Right Side - Testimonials */}
@@ -523,36 +523,27 @@ const Home = () => {
                 <div id="core-testimonials" className="testimonials-section">
                   <div className="testimonials-container">
                     <div className="testimonials-carousel-wrapper">
-                      <div
-                        className="testimonials-carousel"
-                        onMouseEnter={() => setIsAutoPlaying(false)}
-                        onMouseLeave={() => setIsAutoPlaying(true)}
-                      >
-                        {/* Desktop Navigation Buttons */}
-                        {!isMobile && (
-                          <>
-                            <button
-                              className="carousel-button carousel-button-prev"
-                              onClick={prevSlide}
-                              aria-label="Previous testimonial"
-                            >
-                              <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                              >
-                                <path
-                                  d="M15 18L9 12L15 6"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </>
-                        )}
+                      <div className="testimonials-carousel">
+                        <button
+                          className="carousel-button carousel-button-prev"
+                          onClick={prevSlide}
+                          aria-label="Previous testimonial"
+                        >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M15 18L9 12L15 6"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
 
                         <div className="testimonials-track">
                           <div
@@ -607,107 +598,27 @@ const Home = () => {
                           </div>
                         </div>
 
-                        {!isMobile && (
-                          <button
-                            className="carousel-button carousel-button-next"
-                            onClick={nextSlide}
-                            aria-label="Next testimonial"
-                          >
-                            <svg
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                            >
-                              <path
-                                d="M9 18L15 12L9 6"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Mobile Navigation Buttons */}
-                      {isMobile && (
-                        <div
-                          className="mobile-carousel-controls"
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            gap: "1rem",
-                            marginTop: "1rem",
-                          }}
+                        <button
+                          className="carousel-button carousel-button-next"
+                          onClick={nextSlide}
+                          aria-label="Next testimonial"
                         >
-                          <button
-                            className="carousel-button"
-                            onClick={prevSlide}
-                            aria-label="Previous testimonial"
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              borderRadius: "50%",
-                              border: "none",
-                              backgroundColor: "#0edb61",
-                              color: "#000",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              cursor: "pointer",
-                            }}
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
                           >
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                            >
-                              <path
-                                d="M15 18L9 12L15 6"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </button>
-                          <button
-                            className="carousel-button"
-                            onClick={nextSlide}
-                            aria-label="Next testimonial"
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              borderRadius: "50%",
-                              border: "none",
-                              backgroundColor: "#0edb61",
-                              color: "#000",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              cursor: "pointer",
-                            }}
-                          >
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                            >
-                              <path
-                                d="M9 18L15 12L9 6"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      )}
+                            <path
+                              d="M9 18L15 12L9 6"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
 
                       <div className="carousel-indicators">
                         {testimonials.map((_, index) => (
@@ -834,25 +745,6 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="intcard">
-              <div className="intcontent">
-                <h3 className="intcard-title">IT</h3>
-                <p className="intcard-description">
-                  Explore cutting-edge technology, software development, and
-                  system administration. Gain hands-on experience with
-                  programming languages, database management, and cybersecurity
-                  while working on real-world projects.
-                </p>
-                <div className="intbutton-container">
-                  <button
-                    className="intapply-btn"
-                    onClick={() => handleApplyClick("IT")}
-                  >
-                    APPLY NOW
-                  </button>
-                </div>
-              </div>
-            </div>
 
             <div className="intcard">
               <div className="intcontent">
@@ -862,6 +754,26 @@ const Home = () => {
                   Learn industry-standard accounting software, financial
                   reporting, and budgeting while supporting our finance team
                   with day-to-day operations.
+                </p>
+                <div className="intbutton-container">
+                  <button
+                    className="intapply-btn"
+                    onClick={() => handleApplyClick("Accounting")}
+                  >
+                    APPLY NOW
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="intcard">
+              <div className="intcontent">
+                <h3 className="intcard-title">MULTIMEDIA</h3>
+                <p className="intcard-description">
+                  Join our team and support the development of engaging visual
+                  and audiovisual content across digital platforms. This role is
+                  ideal for students or recent graduates passionate about
+                  storytelling, design, and digital media production.
                 </p>
                 <div className="intbutton-container">
                   <button
@@ -902,7 +814,6 @@ const Home = () => {
                         required
                       />
                     </div>
-
                     {/* Middle Name */}
                     <div className="form-field">
                       <label className="field-label">Middle Name</label>
@@ -916,7 +827,6 @@ const Home = () => {
                         }
                       />
                     </div>
-
                     {/* Last Name */}
                     <div className="form-field">
                       <label className="field-label">Last Name</label>
@@ -931,7 +841,6 @@ const Home = () => {
                         required
                       />
                     </div>
-
                     {/* Email */}
                     <div className="form-field">
                       <label className="field-label">Email</label>
@@ -939,11 +848,12 @@ const Home = () => {
                         className="form-input"
                         type="email"
                         name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="email@example.com"
                         required
                       />
                     </div>
-
                     {/* Address */}
                     <div className="form-field">
                       <label className="field-label">Address</label>
@@ -951,11 +861,12 @@ const Home = () => {
                         className="form-input"
                         type="text"
                         name="address"
-                        placeholder="House#/Street/Barangagy/City/Province"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="House#/Street/Barangay/City/Province"
                         required
                       />
                     </div>
-
                     {/* Phone Number */}
                     <div className="form-field">
                       <label className="field-label" htmlFor="phoneNumber">
@@ -975,13 +886,11 @@ const Home = () => {
                         onChange={(e) => {
                           const input = e.target.value;
                           const digitsOnly = input.replace(/\D/g, "");
-
                           // Ensure it starts with "639"
                           if (!digitsOnly.startsWith("639")) {
                             setPhoneNumber("+639");
                             return;
                           }
-
                           // Extract only up to 10 digits after "639"
                           const rest = digitsOnly.slice(3, 13);
                           setPhoneNumber(`+639${rest}`);
@@ -992,19 +901,16 @@ const Home = () => {
                         required
                       />
                     </div>
-
                     {/* Resume Upload */}
                     <div className="form-field">
                       <label className="field-label" htmlFor="resumeFile">
                         Resume (PDF only, max 10MB):
                       </label>
-
                       <div className="upload-resume">
                         <label htmlFor="resumeFile" className="upload-button">
                           <Paperclip className="icon" size={16} />
                           <span className="upload-text">Upload File </span>
                         </label>
-
                         <input
                           id="resumeFile"
                           name="resumeFile"
@@ -1013,7 +919,6 @@ const Home = () => {
                           onChange={handleResumeChange}
                           style={{ display: "none" }}
                         />
-
                         {resumeFile && (
                           <div className="file-actions">
                             <a
@@ -1160,7 +1065,7 @@ const Home = () => {
               {/* Contact Form (Left) */}
               <form onSubmit={handleContactSubmit} className="contact-form">
                 <div className="form-group">
-                  <label htmlFor="name" className="form-label">
+                  <label htmlFor="fullname" className="form-label">
                     Name
                   </label>
                   <input
@@ -1169,6 +1074,9 @@ const Home = () => {
                     name="name"
                     required
                     className="form-input"
+                    onChange={(e) =>
+                      setName(capitalizeFirstLetter(e.target.value))
+                    }
                   />
                 </div>
                 <div className="form-group">
@@ -1181,6 +1089,9 @@ const Home = () => {
                     name="email"
                     required
                     className="form-input"
+                    onChange={(e) =>
+                      setContactEmail(capitalizeFirstLetter(e.target.value))
+                    }
                   />
                 </div>
                 <div className="form-group">
@@ -1193,12 +1104,13 @@ const Home = () => {
                     rows="4"
                     required
                     className="form-textarea"
+                    onChange={(e) =>
+                      setMessage(capitalizeFirstLetter(e.target.value))
+                    }
                   ></textarea>
                 </div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <a href="" className="intapply-btn">
-                    Send
-                  </a>
+                  <button className="intapply-btn">Submit</button>
                 </div>
               </form>
 

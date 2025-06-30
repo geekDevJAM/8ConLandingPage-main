@@ -754,7 +754,7 @@ const SubBrand = () => {
         .parallax-bull {
           position: relative;
           height: 100vh;
-          background-image: url("/assets/images/bull1.png");
+          background-image: url("/assets/images/bull.png");
           background-attachment: fixed;
           background-position: center;
           background-repeat: no-repeat;
