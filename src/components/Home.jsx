@@ -262,6 +262,7 @@ const Home = () => {
     const payload = {
       name,
       email: contactEmail,
+      phoneNumber: phoneNumber,
       message,
     };
 
@@ -273,7 +274,7 @@ const Home = () => {
         },
         body: JSON.stringify(payload),
       });
-
+      console.log("Submitting contact form...", payload);``
       const data = await response.json();
 
       if (response.ok) {
@@ -1092,6 +1093,39 @@ const Home = () => {
                     onChange={(e) =>
                       setContactEmail(capitalizeFirstLetter(e.target.value))
                     }
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="number" className="form-label">
+                    Number
+                  </label>
+                  <input
+                    className="form-input"
+                    type="tel"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={phoneNumber}
+                    onFocus={() => {
+                      if (phoneNumber === "") {
+                        setPhoneNumber("+639");
+                      }
+                    }}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      const digitsOnly = input.replace(/\D/g, "");
+                      // Ensure it starts with "639"
+                      if (!digitsOnly.startsWith("639")) {
+                        setPhoneNumber("+639");
+                        return;
+                      }
+                      // Extract only up to 10 digits after "639"
+                      const rest = digitsOnly.slice(3, 13);
+                      setPhoneNumber(`+639${rest}`);
+                    }}
+                    placeholder="+639XXXXXXXXX"
+                    title="Enter a valid Philippine phone number (e.g. +639123456789). Only 10 digits after +63."
+                    maxLength={13} // Total: +639XXXXXXXXX
+                    required
                   />
                 </div>
                 <div className="form-group">

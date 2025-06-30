@@ -26,10 +26,10 @@ const upload = multer({
 
 // POST route for internship application
 app.post("/contact", async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, phoneNumber, message } = req.body;
 
   // Validation check
-  if (!name || !email || !message) {
+  if (!name || !email || !phoneNumber || !message) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
@@ -49,6 +49,7 @@ app.post("/contact", async (req, res) => {
     text: `
       Name: ${name}
       Email: ${email}
+      Phone: ${phoneNumber}
       Message: ${message}
     `,
   };
