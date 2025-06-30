@@ -65,6 +65,7 @@ const Home = () => {
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("+63");
+  const [contactNumber, setContactNumber] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
@@ -262,7 +263,7 @@ const Home = () => {
     const payload = {
       name,
       email: contactEmail,
-      phoneNumber: phoneNumber,
+      contactNumber: contactNumber,
       message,
     };
 
@@ -274,7 +275,8 @@ const Home = () => {
         },
         body: JSON.stringify(payload),
       });
-      console.log("Submitting contact form...", payload);``
+      console.log("Submitting contact form...", payload);
+      ``;
       const data = await response.json();
 
       if (response.ok) {
@@ -1096,35 +1098,28 @@ const Home = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="number" className="form-label">
+                  <label htmlFor="contactNumber" className="form-label">
                     Number
                   </label>
                   <input
                     className="form-input"
                     type="tel"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={phoneNumber}
+                    id="contactNumber"
+                    name="contactNumber"
+                    value={contactNumber}
                     onFocus={() => {
-                      if (phoneNumber === "") {
-                        setPhoneNumber("+639");
+                      if (contactNumber === "") {
+                        setContactNumber("");
                       }
                     }}
                     onChange={(e) => {
                       const input = e.target.value;
                       const digitsOnly = input.replace(/\D/g, "");
-                      // Ensure it starts with "639"
-                      if (!digitsOnly.startsWith("639")) {
-                        setPhoneNumber("+639");
-                        return;
-                      }
-                      // Extract only up to 10 digits after "639"
-                      const rest = digitsOnly.slice(3, 13);
-                      setPhoneNumber(`+639${rest}`);
+                      setContactNumber(`+${digitsOnly}`);
                     }}
-                    placeholder="+639XXXXXXXXX"
-                    title="Enter a valid Philippine phone number (e.g. +639123456789). Only 10 digits after +63."
-                    maxLength={13} // Total: +639XXXXXXXXX
+                    placeholder="+CountryCode 9XXXXXXXXX"
+                    title="Enter a valid phone number"
+                    maxLength={14}
                     required
                   />
                 </div>
