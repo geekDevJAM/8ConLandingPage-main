@@ -24,12 +24,12 @@ const upload = multer({
   },
 });
 
-// POST route for internship application
+// POST route for contact us
 app.post("/contact", async (req, res) => {
-  const { name, email, phoneNumber, message } = req.body;
+  const { name, email, contactNumber, message } = req.body;
 
   // Validation check
-  if (!name || !email || !phoneNumber || !message) {
+  if (!name || !email || !contactNumber || !message) {
     return res.status(400).json({ error: "All fields are required." });
   }
 
@@ -50,11 +50,14 @@ app.post("/contact", async (req, res) => {
     to: "staff.8conacademy@gmail.com",
     subject: `Inquiry from ${name}`,
     text: `
-      Name: ${name}
-      Email: ${email}
-      Phone: ${phoneNumber}
-      Message: ${message}
-    `,
+    You have received a new inquiry with the following details:
+
+    Name     : ${name}
+    Email    : ${email}
+    Phone    : ${contactNumber}
+
+    Message:
+    ${message}`,
   };
 
   try {
@@ -66,6 +69,7 @@ app.post("/contact", async (req, res) => {
   }
 });
 
+// POST route for internship application
 app.post("/apply", upload.single("resumeFile"), async (req, res) => {
   const {
     firstName,

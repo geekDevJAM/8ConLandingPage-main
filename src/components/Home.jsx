@@ -65,6 +65,7 @@ const Home = () => {
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("+63");
+  const [contactNumber, setContactNumber] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
@@ -262,7 +263,7 @@ const Home = () => {
     const payload = {
       name,
       email: contactEmail,
-      phoneNumber: phoneNumber,
+      contactNumber: contactNumber,
       message,
     };
 
@@ -525,7 +526,60 @@ const Home = () => {
                 <div id="core-testimonials" className="testimonials-section">
                   <div className="testimonials-container">
                     <div className="testimonials-carousel-wrapper">
-                      <div className="testimonials-carousel">
+                      <div className="testimonials-track">
+                        <div
+                          className="testimonials-slider"
+                          style={{
+                            transform: `translateX(-${currentIndex * 100}%)`,
+                          }}
+                        >
+                          {testimonials.map((testimonial, index) => (
+                            <div key={index} className="testimonial-slide">
+                              <div className="testimonial-card">
+                                <div className="testimonial-content">
+                                  <p className="testimonial-text">
+                                    "{testimonial.text}"
+                                  </p>
+                                  <div className="testimonial-footer">
+                                    <div className="testimonial-avatar">
+                                      <img
+                                        src={testimonial.image}
+                                        alt={testimonial.author}
+                                        onError={(e) => {
+                                          e.target.src = `https://ui-avatars.com/api/?name=${
+                                            testimonial.author.split(",")[0]
+                                          }&background=10b981&color=fff&size=64`;
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="testimonial-info">
+                                      <span className="testimonial-author">
+                                        {testimonial.author}
+                                      </span>
+                                      <div className="testimonial-rating">
+                                        {[...Array(5)].map((_, i) => (
+                                          <svg
+                                            key={i}
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="currentColor"
+                                          >
+                                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                                          </svg>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* ✅ Wrap indicators and arrows together */}
+                      <div className="carousel-controls-wrapper">
                         <button
                           className="carousel-button carousel-button-prev"
                           onClick={prevSlide}
@@ -547,57 +601,17 @@ const Home = () => {
                           </svg>
                         </button>
 
-                        <div className="testimonials-track">
-                          <div
-                            className="testimonials-slider"
-                            style={{
-                              transform: `translateX(-${currentIndex * 100}%)`,
-                            }}
-                          >
-                            {testimonials.map((testimonial, index) => (
-                              <div key={index} className="testimonial-slide">
-                                <div className="testimonial-card">
-                                  <div className="testimonial-content">
-                                    <div className="quote-icon"></div>
-                                    <p className="testimonial-text">
-                                      "{testimonial.text}"
-                                    </p>
-                                    <div className="testimonial-footer">
-                                      <div className="testimonial-avatar">
-                                        <img
-                                          src={testimonial.image}
-                                          alt={testimonial.author}
-                                          onError={(e) => {
-                                            e.target.src = `https://ui-avatars.com/api/?name=${
-                                              testimonial.author.split(",")[0]
-                                            }&background=10b981&color=fff&size=64`;
-                                          }}
-                                        />
-                                      </div>
-                                      <div className="testimonial-info">
-                                        <span className="testimonial-author">
-                                          {testimonial.author}
-                                        </span>
-                                        <div className="testimonial-rating">
-                                          {[...Array(5)].map((_, i) => (
-                                            <svg
-                                              key={i}
-                                              width="16"
-                                              height="16"
-                                              viewBox="0 0 24 24"
-                                              fill="currentColor"
-                                            >
-                                              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                                            </svg>
-                                          ))}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                        <div className="carousel-indicators">
+                          {testimonials.map((_, index) => (
+                            <button
+                              key={index}
+                              className={`indicator ${
+                                index === currentIndex ? "active" : ""
+                              }`}
+                              onClick={() => goToSlide(index)}
+                              aria-label={`Go to testimonial ${index + 1}`}
+                            />
+                          ))}
                         </div>
 
                         <button
@@ -621,19 +635,6 @@ const Home = () => {
                           </svg>
                         </button>
                       </div>
-
-                      <div className="carousel-indicators">
-                        {testimonials.map((_, index) => (
-                          <button
-                            key={index}
-                            className={`indicator ${
-                              index === currentIndex ? "active" : ""
-                            }`}
-                            onClick={() => goToSlide(index)}
-                            aria-label={`Go to testimonial ${index + 1}`}
-                          />
-                        ))}
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -641,65 +642,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-
-        {/* Core Brand */}
-
-        {/* Sub-Brands */}
-
-        {/* <section id="sub-brands" className="sub-brands-section">
-          <div className="section-container-sub">
-            <h2 className="section-title">Sub-Brands</h2>
-            <div className="brands-grid">
-              {[
-                {
-                  name: "8ConStruct",
-                  desc: "Research and statistical consultancy to empower decision-making.",
-                },
-                {
-                  name: "8ConQuest",
-                  desc: "Thesis and career coaching for students and professionals.",
-                },
-                {
-                  name: "8ConVerse",
-                  desc: "Language certification courses to broaden opportunities.",
-                },
-                {
-                  name: "8ConLift",
-                  desc: "Scholarship and training programs for deserving students.",
-                },
-                {
-                  name: "8ConNect",
-                  desc: "Entrepreneur networking hub to grow business relationships.",
-                },
-                {
-                  name: "8ConEdge",
-                  desc: "Proprietary Forex tools to enhance trading efficiency.",
-                },
-                {
-                  name: "8ConEdge",
-                  desc: "Proprietary Forex tools to enhance trading efficiency.",
-                },
-                {
-                  name: "8ConEdge",
-                  desc: "Proprietary Forex tools to enhance trading efficiency.",
-                },
-              ].map((brand, index) => (
-                <div key={index} className="card-sub" style={{ "--i": index }}>
-                  <div
-                    className="bg bg-hover"
-                    style={{ backgroundImage: `url(${brand.image})` }}
-                  >
-                    <div className="overlay"></div>
-                    <div className="brand-info">
-                      <h3 className="brand-title">{brand.name}</h3>
-                      <p className="brand-desc">{brand.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section> */}
 
         <section id="internship" className="section section-internship">
           <div className="internship-title">
@@ -862,14 +804,13 @@ const Home = () => {
                     </div>
                     {/* Address */}
                     <div className="form-field">
-                      <label className="field-label">Address</label>
+                      <label className="field-label">Complete Address</label>
                       <input
                         className="form-input"
                         type="text"
                         name="address"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
-                        placeholder="House#/Street/Barangay/City/Province"
                         required
                       />
                     </div>
@@ -1102,35 +1043,28 @@ const Home = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="number" className="form-label">
+                  <label htmlFor="contactNumber" className="form-label">
                     Number
                   </label>
                   <input
                     className="form-input"
                     type="tel"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={phoneNumber}
+                    id="contactNumber"
+                    name="contactNumber"
+                    value={contactNumber}
                     onFocus={() => {
-                      if (phoneNumber === "") {
-                        setPhoneNumber("+639");
+                      if (contactNumber === "") {
+                        setContactNumber("");
                       }
                     }}
                     onChange={(e) => {
                       const input = e.target.value;
                       const digitsOnly = input.replace(/\D/g, "");
-                      // Ensure it starts with "639"
-                      if (!digitsOnly.startsWith("639")) {
-                        setPhoneNumber("+639");
-                        return;
-                      }
-                      // Extract only up to 10 digits after "639"
-                      const rest = digitsOnly.slice(3, 13);
-                      setPhoneNumber(`+639${rest}`);
+                      setContactNumber(`+${digitsOnly}`);
                     }}
-                    placeholder="+639XXXXXXXXX"
-                    title="Enter a valid Philippine phone number (e.g. +639123456789). Only 10 digits after +63."
-                    maxLength={13} // Total: +639XXXXXXXXX
+                    placeholder="+CountryCode 9XXXXXXXXX"
+                    title="Enter a valid phone number"
+                    maxLength={14}
                     required
                   />
                 </div>
@@ -1203,7 +1137,7 @@ const Home = () => {
         <div className="footer-container">
           <div className="footer-grid">
             {/* Partnership */}
-            <div>
+            <div className="footer-container">
               <h4 className="footer-title">Partnership</h4>
               <ul className="footer-list">
                 <div className="footer-logo">
