@@ -52,7 +52,7 @@ const AboutUs = () => {
           {/* Home Navigation */}
           <nav className="desktop-nav">
             <Link to="/#home" className="nav-link">
-              Home
+              Back <ChevronsRight />
             </Link>
           </nav>
         </div>
@@ -65,7 +65,7 @@ const AboutUs = () => {
               className="mobile-nav-link"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Home
+              Back {">>"}
             </a>
           </nav>
         )}

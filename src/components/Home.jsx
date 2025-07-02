@@ -304,7 +304,12 @@ const Home = () => {
                 className="logo-img"
               />
             </a>
-
+            <button
+              className="mobile-menu-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X /> : <Menu />}
+            </button>
             {/* Desktop Navigation */}
 
             <nav className="desktop-nav">
@@ -370,7 +375,7 @@ const Home = () => {
                 Core Brands
               </a>
               <a
-                href="#sub-brands"
+                href="/sub-brands"
                 className="mobile-nav-link"
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -856,7 +861,7 @@ const Home = () => {
                       <div className="upload-resume">
                         <label htmlFor="resumeFile" className="upload-button">
                           <Paperclip className="icon" size={16} />
-                          <span className="upload-text">Upload File </span>
+                          <span className="upload-text">Upload File Here</span>
                         </label>
                         <input
                           id="resumeFile"
@@ -1062,7 +1067,6 @@ const Home = () => {
                       const digitsOnly = input.replace(/\D/g, "");
                       setContactNumber(`+${digitsOnly}`);
                     }}
-                    placeholder="+CountryCode 9XXXXXXXXX"
                     title="Enter a valid phone number"
                     maxLength={14}
                     required
