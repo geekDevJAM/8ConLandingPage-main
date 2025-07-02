@@ -330,9 +330,8 @@ const Home = () => {
                   </Link>
                 </div>
               </div>
-
-              <Link to="/#news" className="nav-link">
-                Newsletters
+              <Link to="/#about" className="nav-link">
+                About Us
               </Link>
 
               <div className="dropdown">
@@ -340,17 +339,17 @@ const Home = () => {
                   Careers ▾
                 </Link>
                 <div className="dropdown-content">
-                  <Link to="/#internship" className="dropdown-link">
-                    Internship
-                  </Link>
                   <Link to="/#careerpath" className="dropdown-link">
                     Career Paths
+                  </Link>
+                  <Link to="/#internship" className="dropdown-link">
+                    Internship
                   </Link>
                 </div>
               </div>
 
-              <Link to="/#about" className="nav-link">
-                About Us
+              <Link to="/#news" className="nav-link">
+                Newsletters
               </Link>
             </nav>
           </div>
@@ -647,6 +646,106 @@ const Home = () => {
             </div>
           </div>
         </section>
+        <section id="about" className="about-section">
+          <div className="about-container">
+            <div className="about-header">
+              <h1 className="aboutUsTitle">About Us</h1>
+              <p className="subTitle">Confluence is Confidence</p>
+            </div>
+
+            <div className="content-grid">
+              <div className="image-container">
+                <img
+                  src="assets/images/aboutus.jpg"
+                  alt="8Con Logo"
+                  className="aboutus-logo-img"
+                />
+              </div>
+              <div className="text-content">
+                <h3 className="whoWeAre">WHO WE ARE</h3>
+                <h2 className="weAre">8Con Academy</h2>
+                <p className="weAreParagraph">
+                  <span className="text-green-highlight">8CON Academy</span> is
+                  a pioneering financial education institution in Meycauayan,
+                  Bulacan, Philippines. We specialize in forex trading education
+                  with a mission to make{" "}
+                  <span className="text-red-highlight">Forex Trading</span>{" "}
+                  knowledge accessible, practical, and life-changing for every
+                  Filipino household. Founded in 2021, we have quickly become a
+                  trusted center for both aspiring and experienced traders,
+                  offering a unique blend of theoretical learning and hands-on
+                  application.
+                </p>
+                <div style={{ display: "flex", justifyContent: "left" }}>
+                  <Link
+                    to="/aboutus"
+                    className="intapply-btn"
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
+                    Read More
+                    <MoveRight size={18} style={{ marginLeft: "8px" }} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="careerpath" className="section section-careerpath">
+          <div className="careerpath-title">
+            <h1>CAREER PATH</h1>
+            <p>From learner to leader, your forex journey starts here.</p>
+          </div>
+
+          <div className="careerpath-cards">
+            <div className="career-card">
+              <div className="career-content">
+                <h3 className="career-title">FUNDED TRADER</h3>
+                <p className="career-description">
+                  Trade big. Risk none. Show consistency and confidence in your
+                  trading plan to qualify for real capital. Pass internal
+                  reviews, psychology evaluation, and mock account tests.
+                  Mentorship included no fluff, no random signups.
+                </p>
+              </div>
+            </div>
+
+            <div className="career-card">
+              <div className="career-content">
+                <h3 className="career-title">WORKSHOP SPEAKER</h3>
+                <p className="career-description">
+                  You learned with Confluence now you teach it. As a certified
+                  Forex Coach, lead classes, mentor juniors, and guide new
+                  traders. Qualification: core competency completion, coaching
+                  evaluation, and a mock teaching session.
+                </p>
+              </div>
+            </div>
+
+            <div className="career-card">
+              <div className="career-content">
+                <h3 className="career-title">FOREX INSTRUCTOR</h3>
+                <p className="career-description">
+                  You learned with Confluence now you teach it. As a certified
+                  Forex Coach, lead classes, mentor juniors, and guide new
+                  traders. Qualification: core competency completion, coaching
+                  evaluation, and a mock teaching session.
+                </p>
+              </div>
+            </div>
+
+            <div className="career-card">
+              <div className="career-content">
+                <h3 className="career-title">8CON FRANCHISEE</h3>
+                <p className="career-description">
+                  Your own trading hub-powered by 8Con. Franchise opportunities
+                  are open to homegrown traders who embody our system, values,
+                  and standards. Qualification: full course graduate, business
+                  mentorship track, and completed operations training.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section id="internship" className="section section-internship">
           <div className="internship-title">
@@ -905,108 +1004,7 @@ const Home = () => {
           </div>
         )}
 
-        <section id="careerpath" className="section section-careerpath">
-          <div className="careerpath-title">
-            <h1>CAREER PATH</h1>
-            <p>Join our team and kickstart your career</p>
-          </div>
-
-          <div className="careerpath-cards">
-            <div className="career-card">
-              <div className="career-content">
-                <h3 className="career-title">FUNDED TRADER</h3>
-                <p className="career-description">
-                  Trade big. Risk none. Show consistency and confidence in your
-                  trading plan to qualify for real capital. Pass internal
-                  reviews, psychology evaluation, and mock account tests.
-                  Mentorship included no fluff, no random signups.
-                </p>
-              </div>
-            </div>
-
-            <div className="career-card">
-              <div className="career-content">
-                <h3 className="career-title">WORKSHOP SPEAKER</h3>
-                <p className="career-description">
-                  You learned with Confluence now you teach it. As a certified
-                  Forex Coach, lead classes, mentor juniors, and guide new
-                  traders. Qualification: core competency completion, coaching
-                  evaluation, and a mock teaching session.
-                </p>
-              </div>
-            </div>
-
-            <div className="career-card">
-              <div className="career-content">
-                <h3 className="career-title">FOREX INSTRUCTOR</h3>
-                <p className="career-description">
-                  You learned with Confluence now you teach it. As a certified
-                  Forex Coach, lead classes, mentor juniors, and guide new
-                  traders. Qualification: core competency completion, coaching
-                  evaluation, and a mock teaching session.
-                </p>
-              </div>
-            </div>
-
-            <div className="career-card">
-              <div className="career-content">
-                <h3 className="career-title">8CON FRANCHISEE</h3>
-                <p className="career-description">
-                  Your own trading hub-powered by 8Con. Franchise opportunities
-                  are open to homegrown traders who embody our system, values,
-                  and standards. Qualification: full course graduate, business
-                  mentorship track, and completed operations training.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* About Us */}
-        <section id="about" className="about-section">
-          <div className="about-container">
-            <div className="about-header">
-              <h1 className="aboutUsTitle">About Us</h1>
-              <p className="subTitle">Confidence is Confluence</p>
-            </div>
-
-            <div className="content-grid">
-              <div className="image-container">
-                <img
-                  src="assets/images/aboutus.jpg"
-                  alt="8Con Logo"
-                  className="aboutus-logo-img"
-                />
-              </div>
-              <div className="text-content">
-                <h3 className="whoWeAre">WHO WE ARE</h3>
-                <h2 className="weAre">8Con Academy</h2>
-                <p className="weAreParagraph">
-                  <span className="text-green-highlight">8CON Academy</span> is
-                  a pioneering financial education institution in Meycauayan,
-                  Bulacan, Philippines. We specialize in forex trading education
-                  with a mission to make{" "}
-                  <span className="text-red-highlight">Forex Trading</span>{" "}
-                  knowledge accessible, practical, and life-changing for every
-                  Filipino household. Founded in 2021, we have quickly become a
-                  trusted center for both aspiring and experienced traders,
-                  offering a unique blend of theoretical learning and hands-on
-                  application.
-                </p>
-                <div style={{ display: "flex", justifyContent: "left" }}>
-                  <Link
-                    to="/aboutus"
-                    className="intapply-btn"
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    Read More
-                    <MoveRight size={18} style={{ marginLeft: "8px" }} />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Contact Us */}
         {/* Contact Section */}
@@ -1120,20 +1118,20 @@ const Home = () => {
               </div>
             </div>
           </div>
+          <section id="faq" className="faq-section">
+            <div className="contact-container">
+              <h3 className="faq-title">Frequently Asked Questions</h3>
+
+              <div className="faq-list">
+                {faqs.map((faq, index) => (
+                  <FAQItem key={index} {...faq} />
+                ))}
+              </div>
+            </div>
+          </section>
         </section>
 
         {/* FAQ Section – Now Separate */}
-        <section id="faq" className="faq-section">
-          <div className="contact-container">
-            <h3 className="faq-title">Frequently Asked Questions</h3>
-
-            <div className="faq-list">
-              {faqs.map((faq, index) => (
-                <FAQItem key={index} {...faq} />
-              ))}
-            </div>
-          </div>
-        </section>
       </main>
       <ScrollUp />
       {/* Footer */}
