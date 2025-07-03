@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import SubBrand from "./SubBrand";
 import ScrollUp from "./ScrollUp";
 import AboutUs from "./AboutUs";
-
+import ScrollLink from "./ScrollLink";
 // import EightConStruct from "./components/EightConStruct";
 import {
   Facebook,
@@ -89,34 +89,34 @@ const Home = () => {
   };
   const testimonials = [
     {
-      backgroundImage: "/assets/images/image.png",
+      backgroundImage: "/assets/images/hajie.png",
       text: "In less than six weeks on 8Con Academy’s Basic Competency course, I turned their FREE account into over $100 profit. The step-by-step lessons, strong focus on risk management, and a truly supportive community proved that even a beginner like me can trade confidently and aim for real financial freedom.",
       author: "Hajie, Student",
     },
     {
-      image: "/assets/images/image.png",
+      backgroundImage: "/assets/images/ken.png",
       text: "At first, I struggled to understand forex terms - until I joined 8Con Academy. Through step-by-step guidance, I learned to read fundamentals and analyze technicals, helping me predict market movements with confidence. What sets 8Con apart is you can already trade profitably even before finishing the course. This experience made me realize my goal: to achieve financial freedom through trading.",
       author: "Ken, Student",
     },
     {
-      image: "/assets/images/image.png",
+      backgroundImage: "/assets/images/image.png",
       text: "At 8Con, I’ve learned not just technical and fundamental analysis, but also the importance of trading psychology. I used to think forex was just 50/50 luck - until I realized it only feels that way without the right education. Learning this shifted my mindset and helped me pursue forex seriously as a potential source of income.",
       author: "Clarence, Student",
     },
     {
-      image: "/assets/images/image.png",
+      backgroundImage: "/assets/images/jhames.png",
       text: "8Con Academy's mentorship program helped me develop not just trading skills but also financial discipline.",
-      author: "Ryan, Professional Trader",
+      author: "Jhames, Entrepreneur",
     },
     {
-      image: "/assets/images/image.png",
+      backgroundImage: "/assets/images/cj.png",
       text: "The real-time market simulations prepared me for actual trading scenarios. Highly recommended!",
-      author: "Ana, Day Trader",
+      author: "CJ, Student",
     },
     {
-      image: "/assets/images/image.png",
+      backgroundImage: "/assets/images/ryan.png",
       text: "From zero knowledge to profitable trades in just 16 weeks. The instructors are world-className!",
-      author: "Carlos, New Graduate",
+      author: "Ryan, Student",
     },
   ];
 
@@ -143,7 +143,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000);
+    const interval = setInterval(nextSlide, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -161,7 +161,7 @@ const Home = () => {
         "Yes! We currently offer FULL SCHOLARSHIPS to all OJT interns and Private Scholars. However, Cooperative (Coop) Scholarships are on hold until further notice.",
     },
     {
-      question: "How long does it take to finish the Forex Derivatives course?",
+      question: "How long does the Forex Derivatives course take?",
       answer:
         "The course runs for a total of 276 hours. Most students complete it within 2 to 3 months, depending on your schedule and commitment.",
     },
@@ -176,8 +176,7 @@ const Home = () => {
         "All 8Con graduates are eligible for our Enrollment to Employment program. You can explore our available career paths by visiting the Career section of our website.",
     },
     {
-      question:
-        "Can I enroll even if I don’t have any background in finance or trading?",
+      question: "Can I enroll without a trading background?",
       answer:
         "Yes! Our course is designed for beginners, so no prior experience is required.",
     },
@@ -341,45 +340,106 @@ const Home = () => {
             {/* Desktop Navigation */}
 
             <nav className="desktop-nav">
-              <Link to="/#home" className="nav-link">
+              <a href="#home" className="nav-link">
                 Home
-              </Link>
+              </a>
 
               <div className="dropdown">
-                <Link to="/#core-brand" className="nav-link">
+                <a href="#core-brand" className="nav-link">
                   Brands ▾
-                </Link>
+                </a>
                 <div className="dropdown-content">
-                  <Link to="/#core-brand" className="dropdown-link">
+                  <a href="#core-brand" className="dropdown-link">
                     Core Brands
-                  </Link>
+                  </a>
                   <Link to="/sub-brands" className="dropdown-link">
                     Sub-brands
                   </Link>
                 </div>
               </div>
-              <Link to="/#about" className="nav-link">
+
+              <a href="#about" className="nav-link">
                 About Us
-              </Link>
+              </a>
 
               <div className="dropdown">
-                <Link to="/#internship" className="nav-link">
+                <a href="#internship" className="nav-link">
                   Careers ▾
-                </Link>
+                </a>
                 <div className="dropdown-content">
-                  <Link to="/#careerpath" className="dropdown-link">
+                  <a href="#careerpath" className="dropdown-link">
                     Career Paths
-                  </Link>
-                  <Link to="/#internship" className="dropdown-link">
+                  </a>
+                  <a href="#internship" className="dropdown-link">
                     Internship
-                  </Link>
+                  </a>
                 </div>
               </div>
 
-              <Link to="/#news" className="nav-link">
+              <a href="#news" className="nav-link">
                 Newsletters
-              </Link>
+              </a>
             </nav>
+
+            {mobileMenuOpen && (
+              <nav className="mobile-nav">
+                <a
+                  href="#home"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Home
+                </a>
+
+                <a
+                  href="#core-brand"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Core Brands
+                </a>
+
+                <Link
+                  to="/sub-brands"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sub-brands
+                </Link>
+
+                <a
+                  href="#news"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Newsletters
+                </a>
+
+                <a
+                  href="#internship"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Internship
+                </a>
+
+                <a
+                  href="#careerpath"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Career Paths
+                </a>
+
+                <a
+                  href="#about"
+                  className="mobile-nav-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  About Us
+                </a>
+              </nav>
+            )}
           </div>
 
           {/* Mobile menu */}
@@ -449,7 +509,7 @@ const Home = () => {
           <div className="hero-container">
             <div className="hero-image-container">
               <img
-                src="/assets/logo/8conwhite.png"
+                src="/assets/logo/herologo.png"
                 alt="8Con Academy Logo"
                 className="hero-image"
               />
@@ -475,10 +535,10 @@ const Home = () => {
                 <a href="#about" className="card-link">
                   <div className="card">
                     <div className="first-content">
-                      <img src="../assets/images/workshop5.jpg" alt="Photo" />
+                      <img src="../assets/images/workshop.jpg" alt="Photo" />
                     </div>
                     <div className="second-content">
-                      <img src="../assets/images/workshop5.jpg" alt="Photo" />
+                      <img src="../assets/images/workshop.jpg" alt="Photo" />
                       <span className="overlay-text">WORKSHOP</span>
                     </div>
                   </div>
@@ -487,11 +547,11 @@ const Home = () => {
                 <Link to="/sub-brands" className="card-link">
                   <div className="card">
                     <div className="first-content">
-                      <img src="/assets/images/logoFour.png" alt="Photo" />
+                      <img src="/assets/images/blog.jpg" alt="Photo" />
                     </div>
                     <div className="second-content">
-                      <img src="/assets/images/logoFour.png" alt="Photo" />
-                      <span className="overlay-text">SUB-BRANDS</span>
+                      <img src="/assets/images/blog.jpg" alt="Photo" />
+                      <span className="overlay-text">BLOGS</span>
                     </div>
                   </div>
                 </Link>
@@ -499,10 +559,10 @@ const Home = () => {
                 <a href="#core-brand" className="card-link">
                   <div className="card">
                     <div className="first-content">
-                      <img src="/assets/images/Jim Gwapo.jpg" alt="Photo" />
+                      <img src="/assets/images/testimonials.jpg" alt="Photo" />
                     </div>
                     <div className="second-content">
-                      <img src="/assets/images/Jim Gwapo.jpg" alt="Photo" />
+                      <img src="/assets/images/testimonials.jpg" alt="Photo" />
                       <span className="overlay-text">TESTIMONIALS</span>
                     </div>
                   </div>
@@ -567,26 +627,24 @@ const Home = () => {
                         >
                           {testimonials.map((testimonial, index) => (
                             <div key={index} className="testimonial-slide">
-                              <div
-                                className="testimonial-card"
-                                style={{
-                                  backgroundImage: `url(${testimonial.backgroundImage})`,
-                                  backgroundSize: "cover",
-                                  backgroundPosition: "center",
-                                  backgroundRepeat: "no-repeat",
-                                  position: "relative",
-                                }}
-                              >
-                                <div className="testimonial-content">
-                                  <p className="testimonial-text">
-                                    "{testimonial.text}"
-                                  </p>
-                                  <div className="testimonial-footer">
-                                    <div className="testimonial-info">
-                                      <span className="testimonial-author">
+                              <div className="testimonial-card">
+                                <div className="testimonial-inner">
+                                  <div className="testimonial-text-container">
+                                    <p className="testimonial-text">
+                                      "{testimonial.text}"
+                                    </p>
+                                    <div className="testimonial-footer">
+                                      <strong className="testimonial-author">
                                         {testimonial.author}
-                                      </span>
+                                      </strong>
                                     </div>
+                                  </div>
+                                  <div className="testimonial-image-container">
+                                    <img
+                                      src={testimonial.backgroundImage}
+                                      alt={testimonial.author}
+                                      className="testimonial-image"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -689,15 +747,19 @@ const Home = () => {
                   offering a unique blend of theoretical learning and hands-on
                   application.
                 </p>
-                <div style={{ display: "flex", justifyContent: "left" }}>
-                  <Link
+                <div
+                  id="page-content"
+                  style={{ display: "flex", justifyContent: "left" }}
+                >
+                  <ScrollLink
                     to="/aboutus"
                     className="intapply-btn"
                     style={{ display: "flex", alignItems: "center" }}
+                    onClick={(e) => e.currentTarget.blur()}
                   >
                     Read More
                     <MoveRight size={18} style={{ marginLeft: "8px" }} />
-                  </Link>
+                  </ScrollLink>
                 </div>
               </div>
             </div>
@@ -1137,7 +1199,11 @@ const Home = () => {
 
               <div className="faq-list">
                 {faqs.map((faq, index) => (
-                  <FAQItem key={index} {...faq} />
+                  <div key={index} className="faq-wrapper">
+                    {" "}
+                    {/* 👈 individual wrapper */}
+                    <FAQItem {...faq} />
+                  </div>
                 ))}
               </div>
             </div>

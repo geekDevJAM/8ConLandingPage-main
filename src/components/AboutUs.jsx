@@ -17,7 +17,7 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import "../App.css";
-
+import ScrollLink from "./ScrollLink";
 const AboutUs = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -66,7 +66,7 @@ const AboutUs = () => {
       <header className={`header ${scrolled ? "scrolled" : ""}`}>
         <div className="header-container">
           {/* Logo */}
-          <a href="#home" className="logo">
+          <a href="/#home" className="logo">
             <img
               src="/assets/logo/8con Academy Logo White.png"
               alt="8Con Academy Logo"
@@ -82,105 +82,30 @@ const AboutUs = () => {
           {/* Desktop Navigation */}
 
           <nav className="desktop-nav">
-            <Link to="/#home" className="nav-link">
+            <ScrollLink
+              to="/#home"
+              className="nav-link"
+              style={{ display: "flex", alignItems: "center" }}
+              onClick={(e) => e.currentTarget.blur()}
+            >
               Home
-            </Link>
-
-            <div className="dropdown">
-              <Link to="/#core-brand" className="nav-link">
-                Brands ▾
-              </Link>
-              <div className="dropdown-content">
-                <Link to="/#core-brand" className="dropdown-link">
-                  Core Brands
-                </Link>
-                <Link to="/sub-brands" className="dropdown-link">
-                  Sub-brands
-                </Link>
-              </div>
-            </div>
-            <Link to="/#about" className="nav-link">
-              About Us
-            </Link>
-
-            <div className="dropdown">
-              <Link to="/#internship" className="nav-link">
-                Careers ▾
-              </Link>
-              <div className="dropdown-content">
-                <Link to="/#careerpath" className="dropdown-link">
-                  Career Paths
-                </Link>
-                <Link to="/#internship" className="dropdown-link">
-                  Internship
-                </Link>
-              </div>
-            </div>
-
-            <Link to="/#news" className="nav-link">
-              Newsletters
-            </Link>
+            </ScrollLink>
           </nav>
         </div>
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <nav className="mobile-nav">
-            <a
-              href="#home"
+            <ScrollLink
+              to="/#home"
               className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
+              style={{ display: "flex", alignItems: "center" }}
+              onClick={(e) => e.currentTarget.blur()}
             >
               Home
-            </a>
+            </ScrollLink>
 
             {/* Brands Dropdown */}
-            <a
-              href="#core-brand"
-              className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Core Brands
-            </a>
-            <a
-              href="/sub-brands"
-              className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Sub-brands
-            </a>
-
-            <a
-              href="#news"
-              className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Newsletters
-            </a>
-
-            {/* Careers Dropdown */}
-            <a
-              href="#internship"
-              className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Internship
-            </a>
-            <a
-              href="#careerpaths"
-              className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Career Paths
-            </a>
-
-            <a
-              href="#about"
-              className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              About Us
-            </a>
           </nav>
         )}
       </header>
@@ -192,7 +117,7 @@ const AboutUs = () => {
           <div className="about-us-hero-overlay">
             <div className="about-us-image-container">
               <img
-                src="/assets/images/aboutus.jpg"
+                src="/assets/images/aboutus2.jpg"
                 alt="8Con Academy Logo"
                 className="header-AboutUs"
               />
@@ -240,7 +165,7 @@ const AboutUs = () => {
                 <p className="about-us-card-text justified-text fade-in">
                   <strong>Sub-brands:</strong>
                 </p>
-                <ul className="about-us-card-text justified-list">
+                <ul className="about-us-card-text justified-list fade-in">
                   <li className="justified-text fade-in">
                     <p className="fade-in">
                       <strong>Forex Derivative Trading Level II:</strong> An
@@ -254,7 +179,7 @@ const AboutUs = () => {
                 <p className="about-us-card-text justified-text fade-in">
                   <strong>Sub-brands:</strong>
                 </p>
-                <ul className="about-us-card-text justified-list sub-brand-grid">
+                <ul className="about-us-card-text justified-list sub-brand-grid fade-in">
                   <li className="justified-text fade-in">
                     <p className="fade-in">
                       <strong>8ConEdge:</strong> Proprietary forex scanner for
@@ -364,7 +289,7 @@ const AboutUs = () => {
                     evolve. Each intern receives:
                   </strong>
                 </p>
-                <ul className="about-us-card-text justified-list">
+                <ul className="about-us-card-text justified-list fade-in">
                   <li className="justified-text fade-in">
                     <p className="fade-in">
                       A Full Scholarship covering Basic to Common Competency.
@@ -415,7 +340,7 @@ const AboutUs = () => {
                 <h3 className="about-us-card-subtitle fade-in">
                   Community Engagement
                 </h3>
-                <ul className="about-us-card-text justified-list">
+                <ul className="about-us-card-text justified-list fade-in">
                   <p className="about-us-card-text justified-text fade-in">
                     8Con Academy fosters an environment where learning continues
                     beyond the classroom.
@@ -496,7 +421,7 @@ const AboutUs = () => {
                   <h2 className="about-us-card-title fade-in">Core Values</h2>
                 </div>
                 <div className="about-us-card-section">
-                  <ul className="about-us-card-text justified-list">
+                  <ul className="about-us-card-text justified-list fade-in">
                     <li className="justified-text fade-in">
                       <p className="fade-in">
                         <strong>Empowering Lives Through Education:</strong> We
@@ -562,7 +487,7 @@ const AboutUs = () => {
                   <p className="about-us-card-text justified-text fade-in fade-in">
                     <strong>That’s why we support:</strong>
                   </p>
-                  <ul className="about-us-card-text justified-list">
+                  <ul className="about-us-card-text justified-list fade-in">
                     <li className="justified-text fade-in">
                       <p className="fade-in">
                         Free educational outreach in public universities and

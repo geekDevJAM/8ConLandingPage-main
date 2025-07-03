@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import {
@@ -23,6 +23,17 @@ const ConCise = () => {
   const [subBrandsDropdownOpen, setSubBrandsDropdownOpen] = useState(false);
   const [mobileSubBrandsDropdownOpen, setMobileSubBrandsDropdownOpen] =
     useState(false);
+  const [animatedSections, setAnimatedSections] = useState(new Set());
+  const [isInHeroSection, setIsInHeroSection] = useState(true);
+  const [heroAnimationKey, setHeroAnimationKey] = useState(0);
+
+  // Create refs for each section
+  const heroRef = useRef(null);
+  const servicesRef = useRef(null);
+  const highlightsRef = useRef(null);
+  const whyChooseRef = useRef(null);
+  const benefitsRef = useRef(null);
+  const ctaRef = useRef(null);
 
   const subBrandsData = [
     {
@@ -39,7 +50,6 @@ const ConCise = () => {
       desc: "Proprietary Forex tools to enhance trading efficiency.",
       icon: <TrendingUp size={60} />,
     },
-
     {
       id: "converse",
       name: "8ConVerse",
@@ -80,20 +90,99 @@ const ConCise = () => {
       name: "8ConSpace",
       route: "/conspace",
       desc: "Co-working space and virtual office solutions for professionals and students.",
-      icon: <Users size={60} />, // You can swap Users for another icon if preferred
+      icon: <Users size={60} />,
     },
     {
       id: "consult",
       name: "8ConSult",
       route: "/consult",
       desc: "Business development and startup advisory with Sir Nigel Santos.",
-      icon: <BookOpen size={60} />, // Change to another icon if you have one in mind
+      icon: <BookOpen size={60} />,
     },
   ];
 
+  // Intersection Observer for all sections (including hero)
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: "0px 0px -50px 0px",
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id;
+          setAnimatedSections((prev) => new Set([...prev, sectionId]));
+        }
+      });
+    }, observerOptions);
+
+    // Observe all sections including hero
+    const sections = [
+      heroRef,
+      servicesRef,
+      highlightsRef,
+      whyChooseRef,
+      benefitsRef,
+      ctaRef,
+    ];
+    sections.forEach((ref) => {
+      if (ref.current) {
+        observer.observe(ref.current);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Special observer for hero section to track when user enters/exits hero
+  useEffect(() => {
+    const heroObserverOptions = {
+      threshold: 0.6, // Hero is considered "active" when 60% visible
+      rootMargin: "0px",
+    };
+
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const wasInHero = isInHeroSection;
+        const nowInHero = entry.isIntersecting;
+
+        setIsInHeroSection(nowInHero);
+
+        // If we're entering the hero section from outside (scrolling back to top)
+        if (nowInHero && !wasInHero) {
+          console.log("Returning to hero - restarting all animations");
+
+          // Reset ALL section animations
+          setAnimatedSections(new Set());
+
+          // Increment animation key to force re-render of hero content
+          setHeroAnimationKey((prev) => prev + 1);
+
+          // Start hero animation first
+          setTimeout(() => {
+            setAnimatedSections((prev) => new Set([...prev, "hero"]));
+          }, 100);
+        }
+        // If we're in hero section initially (page load)
+        else if (nowInHero && wasInHero) {
+          // Ensure hero animation is active on initial load
+          setAnimatedSections((prev) => new Set([...prev, "hero"]));
+        }
+      });
+    }, heroObserverOptions);
+
+    if (heroRef.current) {
+      heroObserver.observe(heroRef.current);
+    }
+
+    return () => heroObserver.disconnect();
+  }, [isInHeroSection]);
+
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 0);
+      const scrollPosition = window.scrollY;
+      setScrolled(scrollPosition > 0);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -119,18 +208,206 @@ const ConCise = () => {
     }
     setMobileMenuOpen(false);
   };
+
+  const handleLearnMore = () => {
+    handleSmoothScroll("services");
+  };
+
+  // Initialize hero animation on mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    setAnimatedSections(new Set());
+
+    // Trigger hero animation on mount
+    setTimeout(() => {
+      setAnimatedSections((prev) => new Set([...prev, "hero"]));
+    }, 300);
   }, []);
+
+  // Check if section should be animated
+  const isAnimated = (sectionId) => animatedSections.has(sectionId);
 
   return (
     <div style={styles.container}>
-      {/* Add CSS styles */}
+      {/* Add CSS styles including enhanced animations */}
       <style>
         {`
           html {
             scroll-behavior: smooth;
             scroll-padding-top: 2px;
+          }
+          
+          /* Enhanced Animation Keyframes */
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(60px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          @keyframes fadeInLeft {
+            from {
+              opacity: 0;
+              transform: translateX(-60px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+          
+          @keyframes fadeInRight {
+            from {
+              opacity: 0;
+              transform: translateX(60px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+          
+          @keyframes scaleIn {
+            from {
+              opacity: 0;
+              transform: scale(0.7) translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1) translateY(0);
+            }
+          }
+          
+          @keyframes bounceIn {
+            0% {
+              opacity: 0;
+              transform: scale(0.2) translateY(50px);
+            }
+            50% {
+              opacity: 1;
+              transform: scale(1.1) translateY(-10px);
+            }
+            70% {
+              transform: scale(0.95) translateY(5px);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1) translateY(0);
+            }
+          }
+          
+          @keyframes slideInFromBottom {
+            from {
+              opacity: 0;
+              transform: translateY(100px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          @keyframes slideInFromTop {
+            from {
+              opacity: 0;
+              transform: translateY(-60px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          @keyframes rotateIn {
+            from {
+              opacity: 0;
+              transform: rotate(-180deg) scale(0.5);
+            }
+            to {
+              opacity: 1;
+              transform: rotate(0deg) scale(1);
+            }
+          }
+          
+          @keyframes zoomIn {
+            from {
+              opacity: 0;
+              transform: scale(0.3);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+          
+          @keyframes pulseGlow {
+            0%, 100% {
+              box-shadow: 0 0 20px rgba(14, 219, 97, 0.3);
+            }
+            50% {
+              box-shadow: 0 0 40px rgba(14, 219, 97, 0.6);
+            }
+          }
+          
+          /* Enhanced Animation Classes */
+          .animate-fade-in-up {
+            animation: fadeInUp 1s ease-out forwards;
+          }
+          
+          .animate-fade-in-left {
+            animation: fadeInLeft 1s ease-out forwards;
+          }
+          
+          .animate-fade-in-right {
+            animation: fadeInRight 1s ease-out forwards;
+          }
+          
+          .animate-scale-in {
+            animation: scaleIn 0.8s ease-out forwards;
+          }
+          
+          .animate-bounce-in {
+            animation: bounceIn 1s ease-out forwards;
+          }
+          
+          .animate-slide-in-bottom {
+            animation: slideInFromBottom 1.2s ease-out forwards;
+          }
+          
+          .animate-slide-in-top {
+            animation: slideInFromTop 1s ease-out forwards;
+          }
+          
+          .animate-rotate-in {
+            animation: rotateIn 1s ease-out forwards;
+          }
+          
+          .animate-zoom-in {
+            animation: zoomIn 0.8s ease-out forwards;
+          }
+          
+          .animate-pulse-glow {
+            animation: pulseGlow 2s infinite;
+          }
+          
+          /* Enhanced stagger animations */
+          .stagger-1 { animation-delay: 0.1s; }
+          .stagger-2 { animation-delay: 0.3s; }
+          .stagger-3 { animation-delay: 0.5s; }
+          .stagger-4 { animation-delay: 0.7s; }
+          .stagger-5 { animation-delay: 0.9s; }
+          .stagger-6 { animation-delay: 1.1s; }
+          .stagger-7 { animation-delay: 1.3s; }
+          .stagger-8 { animation-delay: 1.5s; }
+          .stagger-9 { animation-delay: 1.7s; }
+          
+          /* Initial state for animated elements */
+          .animate-on-scroll {
+            opacity: 0;
           }
           
           .header {
@@ -140,7 +417,7 @@ const ConCise = () => {
             top: 0;
             z-index: 1000;
             width: 100%;
-            padding: 10px 0;
+            padding: 8px 0;
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
             font-weight: 900;
@@ -160,8 +437,7 @@ const ConCise = () => {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-right: 5%;
-            padding-left: 5%;
+            padding: 0 5%;
           }
 
           .logo {
@@ -172,15 +448,15 @@ const ConCise = () => {
           }
           
           .logo-img {
-            height: 40px;
+            height: 35px;
             width: auto;
           }
           
           .desktop-nav {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 14px;
+            gap: 8px;
+            font-size: 13px;
             font-weight: 600;
             position: relative;
           }
@@ -188,7 +464,7 @@ const ConCise = () => {
           .nav-link {
             text-decoration: none;
             color: rgb(255, 255, 255);
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 6px;
             transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
             position: relative;
@@ -197,7 +473,6 @@ const ConCise = () => {
           }
           
           .nav-link:hover {
-            
             transform: translateY(-2px);
           }
           
@@ -314,12 +589,74 @@ const ConCise = () => {
             transition: transform 0.3s ease;
           }
           
+          /* Responsive Media Queries */
+          @media (max-width: 1200px) {
+            .header-container {
+              padding: 0 3%;
+            }
+            .desktop-nav {
+              gap: 6px;
+              font-size: 12px;
+            }
+            .nav-link {
+              padding: 6px 10px;
+            }
+          }
+          
           @media (max-width: 1024px) {
             .desktop-nav {
               display: none !important;
             }
             .mobile-menu-toggle {
               display: block !important;
+            }
+            .logo-img {
+              height: 30px;
+            }
+          }
+          
+          @media (max-width: 768px) {
+            .header {
+              padding: 6px 0;
+            }
+            .header-container {
+              padding: 0 4%;
+            }
+            .logo-img {
+              height: 28px;
+            }
+            .mobile-nav-link {
+              padding: 12px 15px;
+              font-size: 15px;
+            }
+            .mobile-dropdown-toggle {
+              padding: 12px 15px;
+              font-size: 15px;
+            }
+            .mobile-nav-sublink {
+              padding: 10px 15px;
+              font-size: 13px;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .header-container {
+              padding: 0 3%;
+            }
+            .logo-img {
+              height: 25px;
+            }
+            .mobile-nav-link {
+              padding: 10px 12px;
+              font-size: 14px;
+            }
+            .mobile-dropdown-toggle {
+              padding: 10px 12px;
+              font-size: 14px;
+            }
+            .mobile-nav-sublink {
+              padding: 8px 12px;
+              font-size: 12px;
             }
           }
           
@@ -330,7 +667,6 @@ const ConCise = () => {
           }
         `}
       </style>
-
       {/* Header - Navigation */}
       <header className={`header ${scrolled ? "scrolled" : ""}`}>
         <div className="header-container">
@@ -522,23 +858,45 @@ const ConCise = () => {
           </nav>
         )}
       </header>
-
       {/* Hero Section - Green Background */}
-      <section id="top" style={styles.heroSection}>
-        <div style={styles.heroContent}>
-          <h1 style={styles.companyTitle}>8ConCise</h1>
-          <p style={styles.heroSubtitle}>
+      <section id="hero" ref={heroRef} style={styles.heroSection}>
+        <div style={styles.heroContent} key={heroAnimationKey}>
+          <h1
+            style={styles.companyTitle}
+            className={`animate-on-scroll ${
+              isAnimated("hero") ? "animate-slide-in-top" : ""
+            }`}
+          >
+            8ConCise
+          </h1>
+          <p
+            style={styles.heroSubtitle}
+            className={`animate-on-scroll ${
+              isAnimated("hero") ? "animate-fade-in-up stagger-1" : ""
+            }`}
+          >
             Your Precise Pathway to Exam Success
           </p>
-          <p style={styles.heroDescription}>
+          <p
+            style={styles.heroDescription}
+            className={`animate-on-scroll ${
+              isAnimated("hero") ? "animate-fade-in-up stagger-2" : ""
+            }`}
+          >
             8ConCise is dedicated to helping students and professionals achieve
             academic and career milestones through comprehensive, focused review
             programs. Led by Doc May L. Francisco, an experienced educator with
             a proven track record.
           </p>
-          <div style={styles.heroButtons}>
+          <div
+            style={styles.heroButtons}
+            className={`animate-on-scroll ${
+              isAnimated("hero") ? "animate-zoom-in stagger-3" : ""
+            }`}
+          >
             <button
               style={styles.ctaButtonPrimary}
+              className={isAnimated("hero") ? "animate-pulse-glow" : ""}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "#ff1f2c";
                 e.currentTarget.style.transform = "translateY(-3px)";
@@ -552,6 +910,7 @@ const ConCise = () => {
             </button>
             <button
               style={styles.ctaButtonSecondary}
+              onClick={handleLearnMore}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "#0edb61";
                 e.currentTarget.style.color = "#ffffff";
@@ -568,473 +927,451 @@ const ConCise = () => {
           </div>
         </div>
       </section>
-
-      {/* Services Section - Black Background */}
-      <section id="services" style={styles.servicesSection}>
+      {/* Services Section - White Background */}
+      <section id="services" ref={servicesRef} style={styles.servicesSection}>
         <div style={styles.container2}>
-          <h2 style={{ ...styles.sectionTitle, color: "#ffffff" }}>
+          <h2
+            style={{ ...styles.sectionTitle, color: "#0edb61" }}
+            className={`animate-on-scroll ${
+              isAnimated("services") ? "animate-slide-in-top" : ""
+            }`}
+          >
             Services Offered by 8ConCise
           </h2>
           <div style={styles.servicesGrid}>
-            <div
-              style={styles.serviceCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div style={styles.serviceIcon}>
-                <BookOpen size={40} color="#0edb61" />
+            {[
+              {
+                icon: <BookOpen size={40} color="#0edb61" />,
+                title: "Licensure Exam Review",
+                description:
+                  "Comprehensive preparation for professional licensure exams including LET and Criminology Board Exams.",
+                items: [
+                  "• Licensure Examination for Teachers (LET)",
+                  "• Criminology Licensure Exam",
+                  "• Updated materials aligned with latest syllabi",
+                  "• Practice exams and simulations",
+                ],
+              },
+              {
+                icon: <Users size={40} color="#0edb61" />,
+                title: "Civil Service Exam Preparation",
+                description:
+                  "Designed for individuals aiming to qualify for government positions with comprehensive review coverage.",
+                items: [
+                  "• Verbal reasoning and numerical ability",
+                  "• General information coverage",
+                  "• Time management strategies",
+                  "• Mock exams in real test conditions",
+                ],
+              },
+              {
+                icon: <Target size={40} color="#0edb61" />,
+                title: "College Entrance Exam Preparation",
+                description:
+                  "Help high school students prepare for admission to top colleges and universities.",
+                items: [
+                  "• Mathematics, Science, English coverage",
+                  "• Logical reasoning development",
+                  "• University-specific preparation",
+                  "• Test-taking strategies and techniques",
+                ],
+              },
+              {
+                icon: <Clock size={40} color="#0edb61" />,
+                title: "Personalized Learning & Crash Courses",
+                description:
+                  "Customized study plans and intensive preparation for last-minute review needs.",
+                items: [
+                  "• One-on-one mentoring sessions",
+                  "• Customized study plans",
+                  "• Intensive crash courses",
+                  "• Focus on individual strengths/weaknesses",
+                ],
+              },
+            ].map((service, index) => (
+              <div
+                key={index}
+                style={styles.serviceCard}
+                className={`animate-on-scroll ${
+                  isAnimated("services")
+                    ? `animate-bounce-in stagger-${index + 1}`
+                    : ""
+                }`}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-5px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 12px 35px rgba(14, 219, 97, 0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 25px rgba(0,0,0,0.1)";
+                }}
+              >
+                <div
+                  style={styles.serviceIcon}
+                  className={`animate-on-scroll ${
+                    isAnimated("services")
+                      ? `animate-rotate-in stagger-${index + 2}`
+                      : ""
+                  }`}
+                >
+                  {service.icon}
+                </div>
+                <h3
+                  style={styles.serviceTitle}
+                  className={`animate-on-scroll ${
+                    isAnimated("services")
+                      ? `animate-fade-in-left stagger-${index + 3}`
+                      : ""
+                  }`}
+                >
+                  {service.title}
+                </h3>
+                <p style={styles.serviceDescription}>{service.description}</p>
+                <ul style={styles.serviceList}>
+                  {service.items.map((item, itemIndex) => (
+                    <li
+                      key={itemIndex}
+                      style={styles.serviceListItem}
+                      className={`animate-on-scroll ${
+                        isAnimated("services")
+                          ? `animate-fade-in-right stagger-${
+                              index + itemIndex + 4
+                            }`
+                          : ""
+                      }`}
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 style={styles.serviceTitle}>Licensure Exam Review</h3>
-              <p style={styles.serviceDescription}>
-                Comprehensive preparation for professional licensure exams
-                including LET and Criminology Board Exams.
-              </p>
-              <ul style={styles.serviceList}>
-                <li style={styles.serviceListItem}>
-                  • Licensure Examination for Teachers (LET)
-                </li>
-                <li style={styles.serviceListItem}>
-                  • Criminology Licensure Exam
-                </li>
-                <li style={styles.serviceListItem}>
-                  • Updated materials aligned with latest syllabi
-                </li>
-                <li style={styles.serviceListItem}>
-                  • Practice exams and simulations
-                </li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.serviceCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div style={styles.serviceIcon}>
-                <Users size={40} color="#0edb61" />
-              </div>
-              <h3 style={styles.serviceTitle}>
-                Civil Service Exam Preparation
-              </h3>
-              <p style={styles.serviceDescription}>
-                Designed for individuals aiming to qualify for government
-                positions with comprehensive review coverage.
-              </p>
-              <ul style={styles.serviceList}>
-                <li style={styles.serviceListItem}>
-                  • Verbal reasoning and numerical ability
-                </li>
-                <li style={styles.serviceListItem}>
-                  • General information coverage
-                </li>
-                <li style={styles.serviceListItem}>
-                  • Time management strategies
-                </li>
-                <li style={styles.serviceListItem}>
-                  • Mock exams in real test conditions
-                </li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.serviceCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div style={styles.serviceIcon}>
-                <Target size={40} color="#0edb61" />
-              </div>
-              <h3 style={styles.serviceTitle}>
-                College Entrance Exam Preparation
-              </h3>
-              <p style={styles.serviceDescription}>
-                Help high school students prepare for admission to top colleges
-                and universities.
-              </p>
-              <ul style={styles.serviceList}>
-                <li style={styles.serviceListItem}>
-                  • Mathematics, Science, English coverage
-                </li>
-                <li style={styles.serviceListItem}>
-                  • Logical reasoning development
-                </li>
-                <li style={styles.serviceListItem}>
-                  • University-specific preparation
-                </li>
-                <li style={styles.serviceListItem}>
-                  • Test-taking strategies and techniques
-                </li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.serviceCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div style={styles.serviceIcon}>
-                <Clock size={40} color="#0edb61" />
-              </div>
-              <h3 style={styles.serviceTitle}>
-                Personalized Learning & Crash Courses
-              </h3>
-              <p style={styles.serviceDescription}>
-                Customized study plans and intensive preparation for last-minute
-                review needs.
-              </p>
-              <ul style={styles.serviceList}>
-                <li style={styles.serviceListItem}>
-                  • One-on-one mentoring sessions
-                </li>
-                <li style={styles.serviceListItem}>• Customized study plans</li>
-                <li style={styles.serviceListItem}>
-                  • Intensive crash courses
-                </li>
-                <li style={styles.serviceListItem}>
-                  • Focus on individual strengths/weaknesses
-                </li>
-              </ul>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Program Highlights Section - White Background */}
-      <section id="highlights" style={styles.highlightsSection}>
+      <section
+        id="highlights"
+        ref={highlightsRef}
+        style={styles.highlightsSection}
+      >
         <div style={styles.container2}>
-          <h2 style={styles.sectionTitle}>Program Highlights</h2>
+          <h2
+            style={{ ...styles.sectionTitle, color: "#ffffff" }}
+            className={`animate-on-scroll ${
+              isAnimated("highlights") ? "animate-slide-in-top" : ""
+            }`}
+          >
+            Program Highlights
+          </h2>
           <div style={styles.highlightsGrid}>
-            <div
-              style={styles.highlightCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-                e.currentTarget.style.borderColor = "#f0f0f0";
-              }}
-            >
-              <div style={styles.highlightIcon}>
-                <Award size={50} color="#0edb61" />
+            {[
+              {
+                icon: <Award size={50} color="#0edb61" />,
+                title: "Expert-Led Instruction",
+                description:
+                  "All programs are led by Doc May L. Francisco, whose years of teaching and academic experience have prepared countless students to succeed.",
+              },
+              {
+                icon: <BookOpen size={50} color="#ff1f2c" />,
+                title: "Comprehensive Materials",
+                description:
+                  "Reviewers, handouts, and practice questions are updated regularly to reflect the latest exam formats and trends.",
+              },
+              {
+                icon: <CheckCircle size={50} color="#0edb61" />,
+                title: "Mock Exams & Simulations",
+                description:
+                  "Full-length practice tests designed to simulate actual exam conditions, helping students manage time effectively.",
+              },
+              {
+                icon: <Globe size={50} color="#ff1f2c" />,
+                title: "Flexible Delivery Modes",
+                description:
+                  "Choose between on-site classes for interactive learning or online sessions for convenient home study.",
+              },
+            ].map((highlight, index) => (
+              <div
+                key={index}
+                style={styles.highlightCard}
+                className={`animate-on-scroll ${
+                  isAnimated("highlights")
+                    ? `animate-scale-in stagger-${index + 1}`
+                    : ""
+                }`}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-5px)";
+                  e.currentTarget.style.boxShadow =
+                    index % 2 === 0
+                      ? "0 12px 35px rgba(14, 219, 97, 0.2)"
+                      : "0 12px 35px rgba(255, 31, 44, 0.2)";
+                  e.currentTarget.style.borderColor =
+                    index % 2 === 0 ? "#0edb61" : "#ff1f2c";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 25px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.borderColor = "#f0f0f0";
+                }}
+              >
+                <div
+                  style={styles.highlightIcon}
+                  className={`animate-on-scroll ${
+                    isAnimated("highlights")
+                      ? `animate-bounce-in stagger-${index + 2}`
+                      : ""
+                  }`}
+                >
+                  {highlight.icon}
+                </div>
+                <h3
+                  style={styles.highlightTitle}
+                  className={`animate-on-scroll ${
+                    isAnimated("highlights")
+                      ? `animate-fade-in-left stagger-${index + 3}`
+                      : ""
+                  }`}
+                >
+                  {highlight.title}
+                </h3>
+                <p
+                  style={styles.highlightDescription}
+                  className={`animate-on-scroll ${
+                    isAnimated("highlights")
+                      ? `animate-fade-in-right stagger-${index + 4}`
+                      : ""
+                  }`}
+                >
+                  {highlight.description}
+                </p>
               </div>
-              <h3 style={styles.highlightTitle}>Expert-Led Instruction</h3>
-              <p style={styles.highlightDescription}>
-                All programs are led by Doc May L. Francisco, whose years of
-                teaching and academic experience have prepared countless
-                students to succeed.
-              </p>
-            </div>
-
-            <div
-              style={styles.highlightCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(255, 31, 44, 0.2)";
-                e.currentTarget.style.borderColor = "#ff1f2c";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-                e.currentTarget.style.borderColor = "#f0f0f0";
-              }}
-            >
-              <div style={styles.highlightIcon}>
-                <BookOpen size={50} color="#ff1f2c" />
-              </div>
-              <h3 style={styles.highlightTitle}>Comprehensive Materials</h3>
-              <p style={styles.highlightDescription}>
-                Reviewers, handouts, and practice questions are updated
-                regularly to reflect the latest exam formats and trends.
-              </p>
-            </div>
-
-            <div
-              style={styles.highlightCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-                e.currentTarget.style.borderColor = "#f0f0f0";
-              }}
-            >
-              <div style={styles.highlightIcon}>
-                <CheckCircle size={50} color="#0edb61" />
-              </div>
-              <h3 style={styles.highlightTitle}>Mock Exams & Simulations</h3>
-              <p style={styles.highlightDescription}>
-                Full-length practice tests designed to simulate actual exam
-                conditions, helping students manage time effectively.
-              </p>
-            </div>
-
-            <div
-              style={styles.highlightCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(255, 31, 44, 0.2)";
-                e.currentTarget.style.borderColor = "#ff1f2c";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-                e.currentTarget.style.borderColor = "#f0f0f0";
-              }}
-            >
-              <div style={styles.highlightIcon}>
-                <Globe size={50} color="#ff1f2c" />
-              </div>
-              <h3 style={styles.highlightTitle}>Flexible Delivery Modes</h3>
-              <p style={styles.highlightDescription}>
-                Choose between on-site classes for interactive learning or
-                online sessions for convenient home study.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us Section - Black Background */}
-      <section id="why-choose" style={styles.whyChooseSection}>
+      <section
+        id="why-choose"
+        ref={whyChooseRef}
+        style={styles.whyChooseSection}
+      >
         <div style={styles.container2}>
-          <h2 style={{ ...styles.sectionTitle, color: "#ffffff" }}>
+          <h2
+            style={styles.sectionTitle}
+            className={`animate-on-scroll ${
+              isAnimated("why-choose") ? "animate-slide-in-top" : ""
+            }`}
+          >
             Why Choose 8ConCise?
           </h2>
           <div style={styles.benefitsGrid}>
-            <div
-              style={styles.benefitCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-            >
-              <h3 style={styles.benefitTitle}>Proven Track Record</h3>
-              <p style={styles.benefitDescription}>
-                With Doc May's extensive background in education, 8ConCise has a
-                history of producing successful passers across various licensure
-                and entrance exams.
-              </p>
-            </div>
-
-            <div
-              style={styles.benefitCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-            >
-              <h3 style={styles.benefitTitle}>Student-Centric Approach</h3>
-              <p style={styles.benefitDescription}>
-                Every program is tailored to meet the specific needs of
-                students, ensuring they receive the guidance they need to excel.
-              </p>
-            </div>
-
-            <div
-              style={styles.benefitCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-            >
-              <h3 style={styles.benefitTitle}>Accessible and Flexible</h3>
-              <p style={styles.benefitDescription}>
-                With both on-site and online options, students can choose a mode
-                of learning that works best for them.
-              </p>
-            </div>
-
-            <div
-              style={styles.benefitCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-                e.currentTarget.style.borderColor = "#0edb61";
-              }}
-            >
-              <h3 style={styles.benefitTitle}>Holistic Preparation</h3>
-              <p style={styles.benefitDescription}>
-                Beyond academic preparation, 8ConCise equips students with
-                test-taking strategies, time management skills, and confidence.
-              </p>
-            </div>
+            {[
+              {
+                title: "Proven Track Record",
+                description:
+                  "With Doc May's extensive background in education, 8ConCise has a history of producing successful passers across various licensure and entrance exams.",
+              },
+              {
+                title: "Student-Centric Approach",
+                description:
+                  "Every program is tailored to meet the specific needs of students, ensuring they receive the guidance they need to excel.",
+              },
+              {
+                title: "Accessible and Flexible",
+                description:
+                  "With both on-site and online options, students can choose a mode of learning that works best for them.",
+              },
+              {
+                title: "Holistic Preparation",
+                description:
+                  "Beyond academic preparation, 8ConCise equips students with test-taking strategies, time management skills, and confidence.",
+              },
+            ].map((benefit, index) => (
+              <div
+                key={index}
+                style={styles.benefitCard}
+                className={`animate-on-scroll ${
+                  isAnimated("why-choose")
+                    ? `animate-fade-in-up stagger-${index + 1}`
+                    : ""
+                }`}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-5px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 12px 35px rgba(14, 219, 97, 0.2)";
+                  e.currentTarget.style.borderColor = "#0edb61";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 25px rgba(0,0,0,0.1)";
+                  e.currentTarget.style.borderColor = "#0edb61";
+                }}
+              >
+                <h3
+                  style={styles.benefitTitle}
+                  className={`animate-on-scroll ${
+                    isAnimated("why-choose")
+                      ? `animate-fade-in-left stagger-${index + 2}`
+                      : ""
+                  }`}
+                >
+                  {benefit.title}
+                </h3>
+                <p
+                  style={styles.benefitDescription}
+                  className={`animate-on-scroll ${
+                    isAnimated("why-choose")
+                      ? `animate-fade-in-right stagger-${index + 3}`
+                      : ""
+                  }`}
+                >
+                  {benefit.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Who Benefits Section - White Background */}
-      <section id="benefits" style={styles.benefitsSection}>
+      <section id="benefits" ref={benefitsRef} style={styles.benefitsSection}>
         <div style={styles.container2}>
-          <h2 style={styles.sectionTitle}>Who Can Benefit from 8ConCise?</h2>
+          <h2
+            style={{ ...styles.sectionTitle, color: "#ffffff" }}
+            className={`animate-on-scroll ${
+              isAnimated("benefits") ? "animate-slide-in-top" : ""
+            }`}
+          >
+            Who Can Benefit from 8ConCise?
+          </h2>
           <div style={styles.clientsGrid}>
-            <div
-              style={styles.clientCategory}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div style={styles.clientIcon}>
-                <Users size={60} color="#0edb61" />
+            {[
+              {
+                icon: <Users size={60} color="#0edb61" />,
+                title: "Aspiring Professionals",
+                items: [
+                  "• Teachers preparing for LET",
+                  "• Criminologists preparing for board exams",
+                  "• Professionals seeking career advancement",
+                ],
+              },
+              {
+                icon: <Target size={60} color="#ff1f2c" />,
+                title: "Civil Service Applicants",
+                items: [
+                  "• Government position seekers",
+                  "• Career shifters to public service",
+                  "• Fresh graduates targeting government jobs",
+                ],
+              },
+              {
+                icon: <BookOpen size={60} color="#0edb61" />,
+                title: "High School Students",
+                items: [
+                  "• College admission exam takers",
+                  "• Students targeting top universities",
+                  "• Those needing intensive review support",
+                ],
+              },
+            ].map((client, index) => (
+              <div
+                key={index}
+                style={styles.clientCategory}
+                className={`animate-on-scroll ${
+                  isAnimated("benefits")
+                    ? `animate-zoom-in stagger-${index + 1}`
+                    : ""
+                }`}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-5px)";
+                  e.currentTarget.style.boxShadow =
+                    index === 1
+                      ? "0 12px 35px rgba(255, 31, 44, 0.2)"
+                      : "0 12px 35px rgba(14, 219, 97, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 25px rgba(0,0,0,0.1)";
+                }}
+              >
+                <div
+                  style={styles.clientIcon}
+                  className={`animate-on-scroll ${
+                    isAnimated("benefits")
+                      ? `animate-rotate-in stagger-${index + 2}`
+                      : ""
+                  }`}
+                >
+                  {client.icon}
+                </div>
+                <h3
+                  style={styles.clientTitle}
+                  className={`animate-on-scroll ${
+                    isAnimated("benefits")
+                      ? `animate-fade-in-up stagger-${index + 3}`
+                      : ""
+                  }`}
+                >
+                  {client.title}
+                </h3>
+                <ul style={styles.clientList}>
+                  {client.items.map((item, itemIndex) => (
+                    <li
+                      key={itemIndex}
+                      style={styles.clientListItem}
+                      className={`animate-on-scroll ${
+                        isAnimated("benefits")
+                          ? `animate-fade-in-left stagger-${
+                              index + itemIndex + 4
+                            }`
+                          : ""
+                      }`}
+                    >
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 style={styles.clientTitle}>Aspiring Professionals</h3>
-              <ul style={styles.clientList}>
-                <li style={styles.clientListItem}>
-                  • Teachers preparing for LET
-                </li>
-                <li style={styles.clientListItem}>
-                  • Criminologists preparing for board exams
-                </li>
-                <li style={styles.clientListItem}>
-                  • Professionals seeking career advancement
-                </li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.clientCategory}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(255, 31, 44, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div style={styles.clientIcon}>
-                <Target size={60} color="#ff1f2c" />
-              </div>
-              <h3 style={styles.clientTitle}>Civil Service Applicants</h3>
-              <ul style={styles.clientList}>
-                <li style={styles.clientListItem}>
-                  • Government position seekers
-                </li>
-                <li style={styles.clientListItem}>
-                  • Career shifters to public service
-                </li>
-                <li style={styles.clientListItem}>
-                  • Fresh graduates targeting government jobs
-                </li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.clientCategory}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <div style={styles.clientIcon}>
-                <BookOpen size={60} color="#0edb61" />
-              </div>
-              <h3 style={styles.clientTitle}>High School Students</h3>
-              <ul style={styles.clientList}>
-                <li style={styles.clientListItem}>
-                  • College admission exam takers
-                </li>
-                <li style={styles.clientListItem}>
-                  • Students targeting top universities
-                </li>
-                <li style={styles.clientListItem}>
-                  • Those needing intensive review support
-                </li>
-              </ul>
-            </div>
+            ))}
           </div>
         </div>
       </section>
-
-      {/* CTA Section - Black Background */}
-      <section id="cta" style={styles.ctaSection}>
+      <section id="cta" ref={ctaRef} style={styles.ctaSection}>
         <div style={styles.container2}>
-          <h2 style={styles.ctaTitle}>The 8ConCise Advantage</h2>
-          <p style={styles.ctaDescription}>
+          <h2
+            style={styles.ctaTitle}
+            className={`animate-on-scroll ${
+              isAnimated("cta") ? "animate-slide-in-top" : ""
+            }`}
+          >
+            The 8ConCise Advantage
+          </h2>
+          <p
+            style={styles.ctaDescription}
+            className={`animate-on-scroll ${
+              isAnimated("cta") ? "animate-fade-in-up stagger-1" : ""
+            }`}
+          >
             At 8ConCise, we believe that exam success is not just about studying
             hard but studying smart. With expert guidance from Doc May L.
             Francisco and a proven, structured approach, we empower students to
             achieve their goals and unlock new opportunities.
           </p>
-          <div style={styles.ctaButtons}>
+          <div
+            style={styles.ctaButtons}
+            className={`animate-on-scroll ${
+              isAnimated("cta") ? "animate-scale-in stagger-2" : ""
+            }`}
+          >
             <button
               style={styles.ctaButtonPrimary}
+              className={`animate-on-scroll ${
+                isAnimated("cta") ? "animate-bounce-in stagger-3" : ""
+              }`}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "#ff1f2c";
                 e.currentTarget.style.transform = "translateY(-3px)";
@@ -1048,6 +1385,9 @@ const ConCise = () => {
             </button>
             <button
               style={styles.ctaButtonRed}
+              className={`animate-on-scroll ${
+                isAnimated("cta") ? "animate-bounce-in stagger-4" : ""
+              }`}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = "#0edb61";
                 e.currentTarget.style.transform = "translateY(-3px)";
@@ -1062,6 +1402,11 @@ const ConCise = () => {
           </div>
           <div
             style={styles.ctaHighlight}
+            className={`animate-on-scroll ${
+              isAnimated("cta")
+                ? "animate-fade-in-up stagger-5 animate-pulse-glow"
+                : ""
+            }`}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = "rgba(255, 31, 44, 0.2)";
               e.currentTarget.style.borderColor = "#ff1f2c";
@@ -1081,7 +1426,7 @@ const ConCise = () => {
   );
 };
 
-// Styling with alternating background colors and specified color palette
+// Enhanced Responsive Styling
 const styles = {
   container: {
     minHeight: "100vh",
@@ -1096,9 +1441,16 @@ const styles = {
     maxWidth: "1200px",
     margin: "0 auto",
     padding: "0 20px",
+    // Responsive padding
+    "@media (max-width: 768px)": {
+      padding: "0 15px",
+    },
+    "@media (max-width: 480px)": {
+      padding: "0 12px",
+    },
   },
 
-  // Hero Section - Green Background
+  // Hero Section - Enhanced Responsive
   heroSection: {
     background: "linear-gradient(135deg, #0edb61 0%, #000000 100%)",
     color: "#ffffff",
@@ -1108,36 +1460,70 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    // Responsive adjustments
+    "@media (max-width: 768px)": {
+      padding: "120px 15px 60px",
+      minHeight: "90vh",
+    },
+    "@media (max-width: 480px)": {
+      padding: "100px 12px 40px",
+      minHeight: "85vh",
+    },
   },
 
   heroContent: {
     maxWidth: "800px",
     margin: "0 auto",
+    // Responsive width
+    "@media (max-width: 768px)": {
+      maxWidth: "100%",
+    },
   },
 
   companyTitle: {
-    fontSize: "clamp(2.5rem, 8vw, 4rem)",
+    fontSize: "clamp(2rem, 8vw, 4rem)",
     fontWeight: "700",
     marginBottom: "1rem",
     textShadow: "0 4px 8px rgba(0,0,0,0.3)",
+    filter:
+      "drop-shadow(0 0 5px #121411) drop-shadow(0 0 10px #121411) drop-shadow(0 0 15px #121411)",
     color: "#ffffff",
+    // Enhanced mobile responsiveness
+    "@media (max-width: 480px)": {
+      fontSize: "clamp(1.8rem, 10vw, 2.5rem)",
+      marginBottom: "0.8rem",
+    },
   },
 
   heroSubtitle: {
-    fontSize: "clamp(1.2rem, 4vw, 1.8rem)",
+    fontSize: "clamp(1rem, 4vw, 1.8rem)",
     fontWeight: "300",
     marginBottom: "1.5rem",
     opacity: "0.9",
     color: "#ffffff",
+    // Mobile adjustments
+    "@media (max-width: 480px)": {
+      fontSize: "clamp(0.9rem, 5vw, 1.4rem)",
+      marginBottom: "1.2rem",
+    },
   },
 
   heroDescription: {
-    fontSize: "clamp(1rem, 3vw, 1.2rem)",
+    fontSize: "clamp(0.9rem, 3vw, 1.2rem)",
     lineHeight: "1.7",
     maxWidth: "600px",
     margin: "0 auto 2rem",
     opacity: "0.95",
     color: "#ffffff",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      maxWidth: "100%",
+      margin: "0 auto 1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "clamp(0.85rem, 4vw, 1rem)",
+      lineHeight: "1.6",
+    },
   },
 
   heroButtons: {
@@ -1146,6 +1532,16 @@ const styles = {
     justifyContent: "center",
     flexWrap: "wrap",
     marginTop: "2rem",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      gap: "0.8rem",
+      marginTop: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      flexDirection: "column",
+      gap: "0.8rem",
+      alignItems: "center",
+    },
   },
 
   ctaButtonPrimary: {
@@ -1159,6 +1555,16 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.3s ease",
     textTransform: "uppercase",
+    // Responsive button sizing
+    "@media (max-width: 768px)": {
+      padding: "0.9rem 1.8rem",
+      fontSize: "1rem",
+    },
+    "@media (max-width: 480px)": {
+      padding: "0.8rem 1.5rem",
+      fontSize: "0.9rem",
+      width: "200px",
+    },
   },
 
   ctaButtonSecondary: {
@@ -1172,6 +1578,16 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.3s ease",
     textTransform: "uppercase",
+    // Responsive sizing
+    "@media (max-width: 768px)": {
+      padding: "0.9rem 1.8rem",
+      fontSize: "1rem",
+    },
+    "@media (max-width: 480px)": {
+      padding: "0.8rem 1.5rem",
+      fontSize: "0.9rem",
+      width: "200px",
+    },
   },
 
   ctaButtonRed: {
@@ -1185,9 +1601,19 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.3s ease",
     textTransform: "uppercase",
+    // Responsive sizing
+    "@media (max-width: 768px)": {
+      padding: "0.9rem 1.8rem",
+      fontSize: "1rem",
+    },
+    "@media (max-width: 480px)": {
+      padding: "0.8rem 1.5rem",
+      fontSize: "0.9rem",
+      width: "200px",
+    },
   },
 
-  // Services Section - Black Background
+  // Services Section - Enhanced Responsive
   servicesSection: {
     background: "#ffffff",
     padding: "80px 20px",
@@ -1195,14 +1621,30 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      padding: "60px 15px",
+      minHeight: "auto",
+    },
+    "@media (max-width: 480px)": {
+      padding: "40px 12px",
+    },
   },
 
   sectionTitle: {
-    fontSize: "clamp(2rem, 5vw, 2.5rem)",
+    fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
     fontWeight: "700",
     color: "#0edb61",
     textAlign: "center",
     marginBottom: "3rem",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      marginBottom: "2rem",
+    },
+    "@media (max-width: 480px)": {
+      marginBottom: "1.5rem",
+      fontSize: "clamp(1.3rem, 6vw, 2rem)",
+    },
   },
 
   servicesGrid: {
@@ -1210,6 +1652,17 @@ const styles = {
     gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
     gap: "2rem",
     marginTop: "2rem",
+    // Enhanced responsive grid
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+      gap: "1.5rem",
+      marginTop: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      gridTemplateColumns: "1fr",
+      gap: "1.2rem",
+      marginTop: "1rem",
+    },
   },
 
   serviceCard: {
@@ -1220,12 +1673,24 @@ const styles = {
     border: "2px solid #0edb61",
     transition: "all 0.3s ease",
     textAlign: "center",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      padding: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      padding: "1.2rem",
+      borderRadius: "12px",
+    },
   },
 
   serviceIcon: {
     marginBottom: "1rem",
     display: "flex",
     justifyContent: "center",
+    // Mobile adjustments
+    "@media (max-width: 480px)": {
+      marginBottom: "0.8rem",
+    },
   },
 
   serviceTitle: {
@@ -1233,6 +1698,14 @@ const styles = {
     fontWeight: "700",
     color: "#0edb61",
     marginBottom: "1rem",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      fontSize: "1.2rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "1.1rem",
+      marginBottom: "0.8rem",
+    },
   },
 
   serviceDescription: {
@@ -1240,6 +1713,15 @@ const styles = {
     color: "#000000",
     marginBottom: "1.5rem",
     lineHeight: "1.6",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      fontSize: "0.95rem",
+      marginBottom: "1.2rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+      marginBottom: "1rem",
+    },
   },
 
   serviceList: {
@@ -1254,15 +1736,32 @@ const styles = {
     color: "#000000",
     marginBottom: "0.8rem",
     lineHeight: "1.5",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      fontSize: "0.9rem",
+      marginBottom: "0.7rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "0.85rem",
+      marginBottom: "0.6rem",
+    },
   },
 
-  // Program Highlights Section - White Background
+  // Program Highlights Section - Enhanced Responsive
   highlightsSection: {
     background: "#000000",
     padding: "80px 20px",
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      padding: "60px 15px",
+      minHeight: "auto",
+    },
+    "@media (max-width: 480px)": {
+      padding: "40px 12px",
+    },
   },
 
   highlightsGrid: {
@@ -1270,6 +1769,17 @@ const styles = {
     gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
     gap: "2rem",
     marginTop: "2rem",
+    // Enhanced responsive grid
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+      gap: "1.5rem",
+      marginTop: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      gridTemplateColumns: "1fr",
+      gap: "1.2rem",
+      marginTop: "1rem",
+    },
   },
 
   highlightCard: {
@@ -1281,12 +1791,24 @@ const styles = {
     border: "2px solid #f0f0f0",
     transition: "all 0.3s ease",
     cursor: "pointer",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      padding: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      padding: "1.2rem",
+      borderRadius: "12px",
+    },
   },
 
   highlightIcon: {
     marginBottom: "1rem",
     display: "flex",
     justifyContent: "center",
+    // Mobile adjustments
+    "@media (max-width: 480px)": {
+      marginBottom: "0.8rem",
+    },
   },
 
   highlightTitle: {
@@ -1294,21 +1816,45 @@ const styles = {
     fontWeight: "700",
     color: "#000000",
     marginBottom: "1rem",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      fontSize: "1.3rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "1.2rem",
+      marginBottom: "0.8rem",
+    },
   },
 
   highlightDescription: {
     fontSize: "1rem",
     color: "#000000",
     lineHeight: "1.7",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      fontSize: "0.95rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+      lineHeight: "1.6",
+    },
   },
 
-  // Why Choose Section - Black Background
+  // Why Choose Section - Enhanced Responsive
   whyChooseSection: {
     background: "#ffffff",
     padding: "80px 20px",
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      padding: "60px 15px",
+      minHeight: "auto",
+    },
+    "@media (max-width: 480px)": {
+      padding: "40px 12px",
+    },
   },
 
   benefitsGrid: {
@@ -1316,6 +1862,17 @@ const styles = {
     gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
     gap: "2rem",
     marginTop: "2rem",
+    // Enhanced responsive grid
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+      gap: "1.5rem",
+      marginTop: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      gridTemplateColumns: "1fr",
+      gap: "1.2rem",
+      marginTop: "1rem",
+    },
   },
 
   benefitCard: {
@@ -1327,6 +1884,14 @@ const styles = {
     border: "2px solid #0edb61",
     transition: "all 0.3s ease",
     cursor: "pointer",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      padding: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      padding: "1.2rem",
+      borderRadius: "12px",
+    },
   },
 
   benefitTitle: {
@@ -1334,21 +1899,45 @@ const styles = {
     fontWeight: "700",
     color: "#0edb61",
     marginBottom: "1rem",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      fontSize: "1.3rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "1.2rem",
+      marginBottom: "0.8rem",
+    },
   },
 
   benefitDescription: {
     fontSize: "1rem",
     color: "#000000",
     lineHeight: "1.7",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      fontSize: "0.95rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+      lineHeight: "1.6",
+    },
   },
 
-  // Who Benefits Section - White Background
+  // Who Benefits Section - Enhanced Responsive
   benefitsSection: {
     background: "#000000",
     padding: "80px 20px",
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      padding: "60px 15px",
+      minHeight: "auto",
+    },
+    "@media (max-width: 480px)": {
+      padding: "40px 12px",
+    },
   },
 
   clientsGrid: {
@@ -1356,6 +1945,17 @@ const styles = {
     gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
     gap: "3rem",
     marginTop: "3rem",
+    // Enhanced responsive grid
+    "@media (max-width: 768px)": {
+      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+      gap: "2rem",
+      marginTop: "2rem",
+    },
+    "@media (max-width: 480px)": {
+      gridTemplateColumns: "1fr",
+      gap: "1.5rem",
+      marginTop: "1.5rem",
+    },
   },
 
   clientCategory: {
@@ -1367,12 +1967,24 @@ const styles = {
     boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
     transition: "all 0.3s ease",
     cursor: "pointer",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      padding: "2rem",
+    },
+    "@media (max-width: 480px)": {
+      padding: "1.5rem",
+      borderRadius: "12px",
+    },
   },
 
   clientIcon: {
     marginBottom: "1rem",
     display: "flex",
     justifyContent: "center",
+    // Mobile adjustments
+    "@media (max-width: 480px)": {
+      marginBottom: "0.8rem",
+    },
   },
 
   clientTitle: {
@@ -1380,6 +1992,15 @@ const styles = {
     fontWeight: "700",
     color: "#0edb61",
     marginBottom: "1.5rem",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      fontSize: "1.4rem",
+      marginBottom: "1.2rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "1.3rem",
+      marginBottom: "1rem",
+    },
   },
 
   clientList: {
@@ -1394,9 +2015,18 @@ const styles = {
     color: "#000000",
     marginBottom: "1rem",
     lineHeight: "1.6",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      fontSize: "0.95rem",
+      marginBottom: "0.8rem",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "0.9rem",
+      marginBottom: "0.7rem",
+    },
   },
 
-  // CTA Section - Black Background
+  // CTA Section - Enhanced Responsive
   ctaSection: {
     background: "#ffffff",
     color: "#ffffff",
@@ -1405,22 +2035,49 @@ const styles = {
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      padding: "60px 15px",
+      minHeight: "auto",
+    },
+    "@media (max-width: 480px)": {
+      padding: "40px 12px",
+    },
   },
 
   ctaTitle: {
-    fontSize: "clamp(2rem, 5vw, 2.5rem)",
+    fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
     fontWeight: "700",
     marginBottom: "2rem",
     color: "#000000",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      marginBottom: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      marginBottom: "1.2rem",
+      fontSize: "clamp(1.3rem, 6vw, 2rem)",
+    },
   },
 
   ctaDescription: {
-    fontSize: "clamp(1rem, 3vw, 1.2rem)",
+    fontSize: "clamp(0.9rem, 3vw, 1.2rem)",
     lineHeight: "1.8",
     maxWidth: "800px",
     margin: "0 auto 2rem",
     opacity: "0.95",
     color: "#000000",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      maxWidth: "100%",
+      margin: "0 auto 1.5rem",
+      lineHeight: "1.7",
+    },
+    "@media (max-width: 480px)": {
+      fontSize: "clamp(0.85rem, 4vw, 1rem)",
+      lineHeight: "1.6",
+      margin: "0 auto 1.2rem",
+    },
   },
 
   ctaButtons: {
@@ -1429,19 +2086,41 @@ const styles = {
     justifyContent: "center",
     flexWrap: "wrap",
     marginBottom: "2rem",
+    // Mobile adjustments
+    "@media (max-width: 768px)": {
+      gap: "0.8rem",
+      marginBottom: "1.5rem",
+    },
+    "@media (max-width: 480px)": {
+      flexDirection: "column",
+      gap: "0.8rem",
+      alignItems: "center",
+      marginBottom: "1.2rem",
+    },
   },
 
   ctaHighlight: {
     background: "rgba(14, 219, 97, 0.1)",
     padding: "1.5rem",
     borderRadius: "10px",
-    fontSize: "clamp(1.1rem, 3vw, 1.3rem)",
+    fontSize: "clamp(1rem, 3vw, 1.3rem)",
     maxWidth: "700px",
     margin: "0 auto",
     border: "2px solid #0edb61",
     color: "#000000",
     transition: "all 0.3s ease",
     cursor: "pointer",
+    // Mobile responsiveness
+    "@media (max-width: 768px)": {
+      padding: "1.2rem",
+      maxWidth: "100%",
+      fontSize: "clamp(0.95rem, 4vw, 1.2rem)",
+    },
+    "@media (max-width: 480px)": {
+      padding: "1rem",
+      borderRadius: "8px",
+      fontSize: "clamp(0.9rem, 4.5vw, 1.1rem)",
+    },
   },
 };
 
