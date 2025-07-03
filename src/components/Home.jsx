@@ -89,19 +89,19 @@ const Home = () => {
   };
   const testimonials = [
     {
-      image: "/assets/images/image.png",
-      text: "Thanks to 8Con Academy, I went from a beginner to a confident trader with consistent profits!",
-      author: "Jhames, Graduate",
+      backgroundImage: "/assets/images/image.png",
+      text: "In less than six weeks on 8Con Academy’s Basic Competency course, I turned their FREE account into over $100 profit. The step-by-step lessons, strong focus on risk management, and a truly supportive community proved that even a beginner like me can trade confidently and aim for real financial freedom.",
+      author: "Hajie, Student",
     },
     {
       image: "/assets/images/image.png",
-      text: "The Enrollment to Employment program helped me get hired immediately after the course.",
-      author: "CJ, Alumni",
+      text: "At first, I struggled to understand forex terms - until I joined 8Con Academy. Through step-by-step guidance, I learned to read fundamentals and analyze technicals, helping me predict market movements with confidence. What sets 8Con apart is you can already trade profitably even before finishing the course. This experience made me realize my goal: to achieve financial freedom through trading.",
+      author: "Ken, Student",
     },
     {
       image: "/assets/images/image.png",
-      text: "The comprehensive curriculum and hands-on training gave me the confidence to start my own trading business.",
-      author: "Grace, Entrepreneur",
+      text: "At 8Con, I’ve learned not just technical and fundamental analysis, but also the importance of trading psychology. I used to think forex was just 50/50 luck - until I realized it only feels that way without the right education. Learning this shifted my mindset and helped me pursue forex seriously as a potential source of income.",
+      author: "Clarence, Student",
     },
     {
       image: "/assets/images/image.png",
@@ -255,7 +255,35 @@ const Home = () => {
       alert("Submission error");
     }
   };
+  useEffect(() => {
+    const cards = document.querySelectorAll(".career-card");
 
+    const handleScroll = () => {
+      const careerPathSection = document.getElementById("careerpath");
+      const homeSection = document.getElementById("home");
+
+      const careerTop = careerPathSection?.getBoundingClientRect().top;
+      const careerBottom = careerPathSection?.getBoundingClientRect().bottom;
+      const homeBottom = homeSection?.getBoundingClientRect().bottom;
+
+      // Animate cards into view when career section is in viewport
+      if (careerTop < window.innerHeight && careerBottom > 0) {
+        cards.forEach((card) => card.classList.add("animate"));
+      }
+
+      // Reset animation when scrolling back to home
+      if (homeBottom > 0) {
+        cards.forEach((card) => card.classList.remove("animate"));
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial check
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   // End of Modal ni moran
   const handleContactSubmit = async (e) => {
     e.preventDefault(); // prevents default form submission behavior
@@ -539,40 +567,25 @@ const Home = () => {
                         >
                           {testimonials.map((testimonial, index) => (
                             <div key={index} className="testimonial-slide">
-                              <div className="testimonial-card">
+                              <div
+                                className="testimonial-card"
+                                style={{
+                                  backgroundImage: `url(${testimonial.backgroundImage})`,
+                                  backgroundSize: "cover",
+                                  backgroundPosition: "center",
+                                  backgroundRepeat: "no-repeat",
+                                  position: "relative",
+                                }}
+                              >
                                 <div className="testimonial-content">
                                   <p className="testimonial-text">
                                     "{testimonial.text}"
                                   </p>
                                   <div className="testimonial-footer">
-                                    <div className="testimonial-avatar">
-                                      <img
-                                        src={testimonial.image}
-                                        alt={testimonial.author}
-                                        onError={(e) => {
-                                          e.target.src = `https://ui-avatars.com/api/?name=${
-                                            testimonial.author.split(",")[0]
-                                          }&background=10b981&color=fff&size=64`;
-                                        }}
-                                      />
-                                    </div>
                                     <div className="testimonial-info">
                                       <span className="testimonial-author">
                                         {testimonial.author}
                                       </span>
-                                      <div className="testimonial-rating">
-                                        {[...Array(5)].map((_, i) => (
-                                          <svg
-                                            key={i}
-                                            width="16"
-                                            height="16"
-                                            viewBox="0 0 24 24"
-                                            fill="currentColor"
-                                          >
-                                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                                          </svg>
-                                        ))}
-                                      </div>
                                     </div>
                                   </div>
                                 </div>

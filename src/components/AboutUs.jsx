@@ -496,9 +496,6 @@ const AboutUs = () => {
                   <h2 className="about-us-card-title fade-in">Core Values</h2>
                 </div>
                 <div className="about-us-card-section">
-                  <h3 className="about-us-card-subtitle fade-in">
-                    Detailed Version
-                  </h3>
                   <ul className="about-us-card-text justified-list">
                     <li className="justified-text fade-in">
                       <p className="fade-in">
