@@ -2777,29 +2777,6 @@ body {
 }
 
 /* Parallax effect for career cards */
-.career-card {
-  opacity: 0;
-  transform: translateY(80px);
-  transition: opacity 2.5s ease, transform 2.5s ease;
-  will-change: transform, opacity;
-}
-
-.career-card.animate {
-  opacity: 1;
-  transform: translateY(0);
-}
-.career-card:nth-child(1) {
-  transition-delay: 0.1s;
-}
-.career-card:nth-child(2) {
-  transition-delay: 0.3s;
-}
-.career-card:nth-child(3) {
-  transition-delay: 0.5s;
-}
-.career-card:nth-child(4) {
-  transition-delay: 0.7s;
-}
 
 /* ==========================================
    MODALS

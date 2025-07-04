@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import ScrollUp from "./ScrollUp";
 import {
   Menu,
   X,
@@ -508,6 +509,7 @@ const SubBrand = () => {
           </section>
         ))}
       </main>
+      <ScrollUp />
 
       <style jsx>{`
         /* Import the navigation styles from your Home.jsx */
@@ -754,7 +756,7 @@ const SubBrand = () => {
         .parallax-bull {
           position: relative;
           height: 100vh;
-          background-image: url("/assets/images/bull.png");
+          background-image: url("/assets/images/bull1.png");
           background-attachment: fixed;
           background-position: center;
           background-repeat: no-repeat;

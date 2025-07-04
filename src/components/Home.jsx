@@ -254,35 +254,6 @@ const Home = () => {
       alert("Submission error");
     }
   };
-  useEffect(() => {
-    const cards = document.querySelectorAll(".career-card");
-
-    const handleScroll = () => {
-      const careerPathSection = document.getElementById("careerpath");
-      const homeSection = document.getElementById("home");
-
-      const careerTop = careerPathSection?.getBoundingClientRect().top;
-      const careerBottom = careerPathSection?.getBoundingClientRect().bottom;
-      const homeBottom = homeSection?.getBoundingClientRect().bottom;
-
-      // Animate cards into view when career section is in viewport
-      if (careerTop < window.innerHeight && careerBottom > 0) {
-        cards.forEach((card) => card.classList.add("animate"));
-      }
-
-      // Reset animation when scrolling back to home
-      if (homeBottom > 0) {
-        cards.forEach((card) => card.classList.remove("animate"));
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
   // End of Modal ni moran
   const handleContactSubmit = async (e) => {
     e.preventDefault(); // prevents default form submission behavior
@@ -316,6 +287,29 @@ const Home = () => {
       alert("Something went wrong.");
     }
   };
+
+  // Fade-in animation on scroll
+  useEffect(() => {
+    const elements = document.querySelectorAll(".fade-in");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="app-container">
@@ -576,7 +570,7 @@ const Home = () => {
           className="section section-cream core-brand-section"
         >
           <div className="section-container-narrow core-brand-container">
-            <h2 className="section-title core-brand-title">
+            <h2 className="section-title core-brand-title fade-in">
               Forex Derivative Trading Level II
             </h2>
 
@@ -584,8 +578,8 @@ const Home = () => {
             <div className="core-brand-content-wrapper">
               {/* Left Side - Core Brand List */}
               <div className="core-brand-left">
-                <ul className="core-brand-list">
-                  <p className="core-brand-description">
+                <ul className="core-brand-list fade-in">
+                  <p className="core-brand-description fade-in">
                     An{" "}
                     <span className="text-red-highlight">Advanced Course</span>{" "}
                     designed to equip students with comprehensive knowledge and
@@ -605,7 +599,7 @@ const Home = () => {
                     Enrollment to Employment program ensuring job placement
                     assistance.
                   </li>
-                  <div className="enroll-button-container">
+                  <div className="enroll-button-container fade-in">
                     <a href="#core-brand" className="intapply-btn">
                       Enroll Now!
                     </a>
@@ -614,7 +608,7 @@ const Home = () => {
               </div>
 
               {/* Right Side - Testimonials */}
-              <div className="core-brand-right">
+              <div className="core-brand-right fade-in">
                 <div id="core-testimonials" className="testimonials-section">
                   <div className="testimonials-container">
                     <div className="testimonials-carousel-wrapper">
@@ -720,27 +714,31 @@ const Home = () => {
         <section id="about" className="about-section">
           <div className="about-container">
             <div className="about-header">
-              <h1 className="aboutUsTitle">About Us</h1>
-              <p className="subTitle">Confluence is Confidence</p>
+              <h1 className="aboutUsTitle fade-in">About Us</h1>
+              <p className="subTitle fade-in">Confluence is Confidence</p>
             </div>
 
             <div className="content-grid">
-              <div className="image-container">
+              <div className="image-container fade-in">
                 <img
                   src="assets/images/aboutus.jpg"
                   alt="8Con Logo"
                   className="aboutus-logo-img"
                 />
               </div>
-              <div className="text-content">
-                <h3 className="whoWeAre">WHO WE ARE</h3>
-                <h2 className="weAre">8Con Academy</h2>
+              <div className="text-content fade-in">
+                <h3 className="whoWeAre fade-in">WHO WE ARE</h3>
+                <h2 className="weAre fade-in">8Con Academy</h2>
                 <p className="weAreParagraph">
-                  <span className="text-green-highlight">8CON Academy</span> is
-                  a pioneering financial education institution in Meycauayan,
+                  <span className="text-green-highlight fade-in">
+                    8CON Academy
+                  </span>{" "}
+                  is a pioneering financial education institution in Meycauayan,
                   Bulacan, Philippines. We specialize in forex trading education
                   with a mission to make{" "}
-                  <span className="text-red-highlight">Forex Trading</span>{" "}
+                  <span className="text-red-highlight fade-in">
+                    Forex Trading
+                  </span>{" "}
                   knowledge accessible, practical, and life-changing for every
                   Filipino household. Founded in 2021, we have quickly become a
                   trusted center for both aspiring and experienced traders,
@@ -753,7 +751,7 @@ const Home = () => {
                 >
                   <ScrollLink
                     to="/aboutus"
-                    className="intapply-btn"
+                    className="intapply-btn fade-in"
                     style={{ display: "flex", alignItems: "center" }}
                     onClick={(e) => e.currentTarget.blur()}
                   >
@@ -766,7 +764,7 @@ const Home = () => {
           </div>
         </section>
         <section id="careerpath" className="section section-careerpath">
-          <div className="careerpath-title">
+          <div className="careerpath-title fade-in">
             <h1>CAREER PATH</h1>
             <p>From learner to leader, your forex journey starts here.</p>
           </div>
@@ -774,8 +772,8 @@ const Home = () => {
           <div className="careerpath-cards">
             <div className="career-card">
               <div className="career-content">
-                <h3 className="career-title">FUNDED TRADER</h3>
-                <p className="career-description">
+                <h3 className="career-title fade-in">FUNDED TRADER</h3>
+                <p className="career-description fade-in">
                   Trade big. Risk none. Show consistency and confidence in your
                   trading plan to qualify for real capital. Pass internal
                   reviews, psychology evaluation, and mock account tests.
@@ -786,8 +784,8 @@ const Home = () => {
 
             <div className="career-card">
               <div className="career-content">
-                <h3 className="career-title">WORKSHOP SPEAKER</h3>
-                <p className="career-description">
+                <h3 className="career-title fade-in">WORKSHOP SPEAKER</h3>
+                <p className="career-description fade-in">
                   You learned with Confluence now you teach it. As a certified
                   Forex Coach, lead classes, mentor juniors, and guide new
                   traders. Qualification: core competency completion, coaching
@@ -798,8 +796,8 @@ const Home = () => {
 
             <div className="career-card">
               <div className="career-content">
-                <h3 className="career-title">FOREX INSTRUCTOR</h3>
-                <p className="career-description">
+                <h3 className="career-title fade-in">FOREX INSTRUCTOR</h3>
+                <p className="career-description fade-in">
                   You learned with Confluence now you teach it. As a certified
                   Forex Coach, lead classes, mentor juniors, and guide new
                   traders. Qualification: core competency completion, coaching
@@ -810,8 +808,8 @@ const Home = () => {
 
             <div className="career-card">
               <div className="career-content">
-                <h3 className="career-title">8CON FRANCHISEE</h3>
-                <p className="career-description">
+                <h3 className="career-title fade-in">8CON FRANCHISEE</h3>
+                <p className="career-description fade-in">
                   Your own trading hub-powered by 8Con. Franchise opportunities
                   are open to homegrown traders who embody our system, values,
                   and standards. Qualification: full course graduate, business
@@ -823,7 +821,7 @@ const Home = () => {
         </section>
 
         <section id="internship" className="section section-internship">
-          <div className="internship-title">
+          <div className="internship-title fade-in">
             <h1>INTERNSHIP</h1>
             <p>Join our team and kickstart your career</p>
           </div>
@@ -831,15 +829,15 @@ const Home = () => {
           <div className="intcards-container">
             <div className="intcard">
               <div className="intcontent">
-                <h3 className="intcard-title">MARKETING</h3>
-                <p className="intcard-description">
+                <h3 className="intcard-title fade-in">MARKETING</h3>
+                <p className="intcard-description fade-in">
                   Brainstorms hooks faster than TikTok trends-driving campaigns,
                   growing communities, and turning scrollers into confident
                   traders. Handles copywriting, social posts, email funnels,
                   light ad tweaks, and community engagement on Discord and
                   Facebook. Checks the data to answer: “Did that reel convert?”
                 </p>
-                <div className="intbutton-container">
+                <div className="intbutton-container fade-in">
                   <button
                     className="intapply-btn"
                     onClick={() => handleApplyClick("Marketing")}
@@ -852,15 +850,15 @@ const Home = () => {
 
             <div className="intcard">
               <div className="intcontent">
-                <h3 className="intcard-title">IT DEPARTMENT</h3>
-                <p className="intcard-description">
+                <h3 className="intcard-title fade-in">IT DEPARTMENT</h3>
+                <p className="intcard-description fade-in">
                   Thinks in Python, dreams in SQL, and debugs in their sleep.
                   Builds trading dashboards, APIs, and features for 8ConEdge.
                   Works on front-end tweaks (React, Next, or Vue), scripts data
                   feeds, maintains servers, runs security checks, and automates
                   tasks to streamline trading workflows.
                 </p>
-                <div className="intbutton-container">
+                <div className="intbutton-container fade-in">
                   <button
                     className="intapply-btn"
                     onClick={() => handleApplyClick("IT")}
@@ -873,15 +871,15 @@ const Home = () => {
 
             <div className="intcard">
               <div className="intcontent">
-                <h3 className="intcard-title">ACCOUNTING</h3>
-                <p className="intcard-description">
+                <h3 className="intcard-title fade-in">ACCOUNTING</h3>
+                <p className="intcard-description fade-in">
                   Spreadsheets sing under their fingertips. Keeps ledgers clean
                   while linking PIPs to P&L. Manages daily bookkeeping, tracks
                   costs for events and courses, builds reports management
                   actually reads, and forecasts budgets with precision and yes,
                   macros-making every number count behind the scenes.
                 </p>
-                <div className="intbutton-container">
+                <div className="intbutton-container fade-in">
                   <button
                     className="intapply-btn"
                     onClick={() => handleApplyClick("Accounting")}
@@ -894,15 +892,15 @@ const Home = () => {
 
             <div className="intcard">
               <div className="intcontent">
-                <h3 className="intcard-title">MULTIMEDIA</h3>
-                <p className="intcard-description">
+                <h3 className="intcard-title fade-in">MULTIMEDIA</h3>
+                <p className="intcard-description fade-in">
                   Camera roll is 90% B-roll. Shoots, edits, and animates nonstop
                   to make forex visually unforgettable. Cuts short-form content
                   like Reels and YouTube Shorts, adds motion graphics and lower
                   thirds, captures event photos, and designs branded assets that
                   stand out across every feed.
                 </p>
-                <div className="intbutton-container">
+                <div className="intbutton-container fade-in">
                   <button
                     className="intapply-btn"
                     onClick={() => handleApplyClick("Multimedia")}
@@ -1084,8 +1082,8 @@ const Home = () => {
         {/* Contact Us */}
         {/* Contact Section */}
         <section id="contact" className="contact-section">
-          <div className="contact-container">
-            <h2 className="section-title">Contact Us</h2>
+          <div className="contact-container fade-in">
+            <h2 className="section-title fade-in">Contact Us</h2>
 
             <div className="contact-top">
               {/* Contact Form (Left) */}
@@ -1194,7 +1192,7 @@ const Home = () => {
             </div>
           </div>
           <section id="faq" className="faq-section">
-            <div className="contact-container">
+            <div className="contact-container fade-in">
               <h3 className="faq-title">Frequently Asked Questions</h3>
 
               <div className="faq-list">

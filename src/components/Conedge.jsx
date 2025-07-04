@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import ScrollUp from "./ScrollUp";
 import {
   Menu,
   X,
@@ -27,6 +28,17 @@ const ConEdge = () => {
   const [subBrandsDropdownOpen, setSubBrandsDropdownOpen] = useState(false);
   const [mobileSubBrandsDropdownOpen, setMobileSubBrandsDropdownOpen] =
     useState(false);
+  const [animatedSections, setAnimatedSections] = useState(new Set());
+  const [isInHeroSection, setIsInHeroSection] = useState(false);
+  const [heroAnimationKey, setHeroAnimationKey] = useState(0);
+
+  // Animation refs
+  const heroRef = useRef(null);
+  const aboutRef = useRef(null);
+  const toolsRef = useRef(null);
+  const solutionsRef = useRef(null);
+  const whyChooseRef = useRef(null);
+  const ctaRef = useRef(null);
 
   const subBrandsData = [
     {
@@ -36,7 +48,6 @@ const ConEdge = () => {
       desc: "Research and statistical consultancy to empower decision-making.",
       icon: <Brain size={60} />,
     },
-
     {
       id: "concise",
       name: "8ConCise",
@@ -44,7 +55,6 @@ const ConEdge = () => {
       desc: "Entrepreneur networking hub to grow business relationships.",
       icon: <Network size={60} />,
     },
-
     {
       id: "converse",
       name: "8ConVerse",
@@ -85,14 +95,14 @@ const ConEdge = () => {
       name: "8ConSpace",
       route: "/conspace",
       desc: "Co-working space and virtual office solutions for professionals and students.",
-      icon: <Users size={60} />, // You can swap Users for another icon if preferred
+      icon: <Users size={60} />,
     },
     {
       id: "consult",
       name: "8ConSult",
       route: "/consult",
       desc: "Business development and startup advisory with Sir Nigel Santos.",
-      icon: <BookOpen size={60} />, // Change to another icon if you have one in mind
+      icon: <BookOpen size={60} />,
     },
   ];
 
@@ -105,20 +115,87 @@ const ConEdge = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Intersection Observer for animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            setAnimatedSections((prev) => new Set([...prev, id]));
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    const sectionRefs = [
+      heroRef,
+      aboutRef,
+      toolsRef,
+      solutionsRef,
+      whyChooseRef,
+      ctaRef,
+    ];
+
+    sectionRefs.forEach((ref) => {
+      if (ref.current) observer.observe(ref.current);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const heroObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const wasInHero = isInHeroSection;
+          const nowInHero = entry.isIntersecting;
+
+          setIsInHeroSection(nowInHero);
+
+          if (nowInHero && !wasInHero) {
+            setAnimatedSections(new Set());
+            setHeroAnimationKey((prev) => prev + 1);
+            setTimeout(() => {
+              setAnimatedSections(new Set(["hero"]));
+            }, 100);
+          } else if (nowInHero && wasInHero) {
+            setAnimatedSections((prev) => new Set([...prev, "hero"]));
+          }
+        });
+      },
+      { threshold: 0.6 }
+    );
+
+    if (heroRef.current) heroObserver.observe(heroRef.current);
+    return () => heroObserver.disconnect();
+  }, [isInHeroSection]);
+
   const handleNavigation = (route) => {
-    // Placeholder for navigation - in real app would use router
-    console.log(`Navigating to: ${route}`);
+    navigate(route);
     setMobileMenuOpen(false);
     setSubBrandsDropdownOpen(false);
     setMobileSubBrandsDropdownOpen(false);
   };
+
+  const handleSmoothScroll = (targetId) => {
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+    setMobileMenuOpen(false);
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   return (
     <div style={styles.container}>
-      {/* Add CSS styles */}
       <style>
         {`
           html {
@@ -133,7 +210,7 @@ const ConEdge = () => {
             top: 0;
             z-index: 1000;
             width: 100%;
-            padding: 10px 0;
+            padding: 8px 0;
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
             font-weight: 900;
@@ -149,14 +226,12 @@ const ConEdge = () => {
           }
           
           .header-container {
-                width: 100%;
-    display: flex
-;
-    align-items: center;
-    justify-content: space-between;
-    padding-right: 5%;
-    padding-left: 5%;
-}
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+          }
           
           .logo {
             display: flex;
@@ -166,15 +241,15 @@ const ConEdge = () => {
           }
           
           .logo-img {
-            height: 40px;
+            height: 35px;
             width: auto;
           }
           
           .desktop-nav {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 14px;
+            gap: 8px;
+            font-size: 13px;
             font-weight: 600;
             position: relative;
           }
@@ -182,16 +257,21 @@ const ConEdge = () => {
           .nav-link {
             text-decoration: none;
             color: rgb(255, 255, 255);
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 6px;
             transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
             position: relative;
             display: inline-block;
             cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            text-transform: inherit;
           }
           
           .nav-link:hover {
-            
             transform: translateY(-2px);
           }
           
@@ -261,6 +341,10 @@ const ConEdge = () => {
             border-bottom: 1px solid #f3f4f6;
             font-size: 16px;
             transition: background-color 0.3s ease;
+            background: none;
+            border: none;
+            font-family: inherit;
+            cursor: pointer;
           }
           
           .mobile-nav-link:hover {
@@ -307,6 +391,271 @@ const ConEdge = () => {
             transform: rotate(180deg);
             transition: transform 0.3s ease;
           }
+
+          /* Animation Keyframes */
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(60px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes slideInLeft {
+            from {
+              opacity: 0;
+              transform: translateX(-100px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          @keyframes slideInRight {
+            from {
+              opacity: 0;
+              transform: translateX(100px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          @keyframes bounceIn {
+            0% {
+              opacity: 0;
+              transform: scale(0.3);
+            }
+            50% {
+              opacity: 1;
+              transform: scale(1.05);
+            }
+            70% {
+              transform: scale(0.95);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+
+          @keyframes scaleIn {
+            from {
+              opacity: 0;
+              transform: scale(0.8);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+
+          @keyframes pulseIn {
+            0% {
+              opacity: 0;
+              transform: scale(0.9);
+            }
+            50% {
+              opacity: 0.8;
+              transform: scale(1.02);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+
+          @keyframes elasticIn {
+            0% {
+              opacity: 0;
+              transform: scale(0.1) rotate(-30deg);
+            }
+            50% {
+              transform: scale(1.05) rotate(10deg);
+            }
+            70% {
+              transform: scale(0.95) rotate(-5deg);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1) rotate(0deg);
+            }
+          }
+
+          /* Hero Content Animations */
+          .hero-title {
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+
+          .hero-title.animate {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            animation: heroTitleFloat 1.2s ease-out 0.2s both;
+          }
+
+          .hero-subtitle {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+
+          .hero-subtitle.animate {
+            opacity: 1;
+            transform: translateX(0);
+            animation: heroSubtitleSlide 1s ease-out 0.5s both;
+          }
+
+          .hero-description {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          }
+
+          .hero-description.animate {
+            opacity: 1;
+            transform: translateX(0);
+            animation: heroDescriptionSlide 1s ease-out 0.8s both;
+          }
+
+          @keyframes heroTitleFloat {
+            0% {
+              opacity: 0;
+              transform: translateY(50px) scale(0.9);
+            }
+            50% {
+              transform: translateY(-10px) scale(1.02);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+
+          @keyframes heroSubtitleSlide {
+            0% {
+              opacity: 0;
+              transform: translateX(-50px);
+            }
+            60% {
+              transform: translateX(5px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          @keyframes heroDescriptionSlide {
+            0% {
+              opacity: 0;
+              transform: translateX(50px);
+            }
+            60% {
+              transform: translateX(-5px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          .slide-left {
+            opacity: 0;
+            transform: translateX(-100px);
+          }
+
+          .slide-left.animate {
+            opacity: 1;
+            transform: translateX(0);
+            animation: slideInLeft 1s ease-out both;
+          }
+
+          .slide-right {
+            opacity: 0;
+            transform: translateX(100px);
+          }
+
+          .slide-right.animate {
+            opacity: 1;
+            transform: translateX(0);
+            animation: slideInRight 1s ease-out both;
+          }
+
+          .bounce-in {
+            opacity: 0;
+            transform: scale(0.3);
+          }
+
+          .bounce-in.animate {
+            opacity: 1;
+            transform: scale(1);
+            animation: bounceIn 0.8s ease-out both;
+          }
+
+          .scale-in {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+
+          .scale-in.animate {
+            opacity: 1;
+            transform: scale(1);
+            animation: scaleIn 0.8s ease-out both;
+          }
+
+          .pulse-in {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+
+          .pulse-in.animate {
+            opacity: 1;
+            transform: scale(1);
+            animation: pulseIn 0.6s ease-out both;
+          }
+
+          .stagger-item {
+            opacity: 0;
+            transform: translateY(50px) scale(0.9);
+            transition: all 0.6s ease-out;
+          }
+
+          .stagger-item.animate {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+
+          .stat-animate {
+            opacity: 0;
+            transform: scale(0.8) rotateX(45deg);
+          }
+
+          .stat-animate.animate {
+            opacity: 1;
+            transform: scale(1) rotateX(0deg);
+            animation: elasticIn 0.8s ease-out both;
+          }
+
+          /* Responsive Media Queries */
+          @media (max-width: 1200px) {
+            .header-container {
+              padding: 0 3%;
+            }
+            .desktop-nav {
+              gap: 6px;
+              font-size: 12px;
+            }
+            .nav-link {
+              padding: 6px 10px;
+            }
+          }
           
           @media (max-width: 1024px) {
             .desktop-nav {
@@ -314,6 +663,54 @@ const ConEdge = () => {
             }
             .mobile-menu-toggle {
               display: block !important;
+            }
+            .logo-img {
+              height: 30px;
+            }
+          }
+          
+          @media (max-width: 768px) {
+            .header {
+              padding: 6px 0;
+            }
+            .header-container {
+              padding: 0 4%;
+            }
+            .logo-img {
+              height: 28px;
+            }
+            .mobile-nav-link {
+              padding: 12px 15px;
+              font-size: 15px;
+            }
+            .mobile-dropdown-toggle {
+              padding: 12px 15px;
+              font-size: 15px;
+            }
+            .mobile-nav-sublink {
+              padding: 10px 15px;
+              font-size: 13px;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .header-container {
+              padding: 0 3%;
+            }
+            .logo-img {
+              height: 25px;
+            }
+            .mobile-nav-link {
+              padding: 10px 12px;
+              font-size: 14px;
+            }
+            .mobile-dropdown-toggle {
+              padding: 10px 12px;
+              font-size: 14px;
+            }
+            .mobile-nav-sublink {
+              padding: 8px 12px;
+              font-size: 12px;
             }
           }
           
@@ -328,7 +725,6 @@ const ConEdge = () => {
       {/* Header - Navigation */}
       <header className={`header ${scrolled ? "scrolled" : ""}`}>
         <div className="header-container">
-          {/* Logo */}
           <a href="/" className="logo">
             <img
               src="/assets/logo/8con Academy Logo White.png"
@@ -337,12 +733,10 @@ const ConEdge = () => {
             />
           </a>
 
-          {/* Desktop Navigation */}
           <nav className="desktop-nav">
-            <Link to="/sub-brands" className="nav-link">
+            <a href="/sub-brands" className="nav-link">
               Home
-            </Link>
-            {/* Sub-brands Dropdown */}
+            </a>
             <div className="dropdown">
               <span className="nav-link">Sub-brands ▾</span>
               <div className="dropdown-content">
@@ -361,24 +755,38 @@ const ConEdge = () => {
                 ))}
               </div>
             </div>
-            <a href="#about" className="nav-link">
+            <button
+              onClick={() => handleSmoothScroll("about")}
+              className="nav-link"
+            >
               About
-            </a>
-            <a href="#tools" className="nav-link">
+            </button>
+            <button
+              onClick={() => handleSmoothScroll("tools")}
+              className="nav-link"
+            >
               Tools
-            </a>
-            <a href="#solutions" className="nav-link">
+            </button>
+            <button
+              onClick={() => handleSmoothScroll("solutions")}
+              className="nav-link"
+            >
               Solutions
-            </a>
-            <a href="#why-choose" className="nav-link">
+            </button>
+            <button
+              onClick={() => handleSmoothScroll("why-choose")}
+              className="nav-link"
+            >
               Insights
-            </a>
-            <a href="#cta" className="nav-link">
+            </button>
+            <button
+              onClick={() => handleSmoothScroll("cta")}
+              className="nav-link"
+            >
               Contact
-            </a>
+            </button>
           </nav>
 
-          {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="mobile-menu-toggle"
@@ -388,14 +796,11 @@ const ConEdge = () => {
           </button>
         </div>
 
-        {/* Mobile menu */}
         {mobileMenuOpen && (
           <nav className="mobile-nav">
-            <Link to="/sub-brands" className="mobile-nav-link">
+            <a href="/sub-brands" className="mobile-nav-link">
               Home
-            </Link>
-
-            {/* Mobile Sub-brands Dropdown */}
+            </a>
             <div className="mobile-dropdown">
               <button
                 className="mobile-nav-link mobile-dropdown-toggle"
@@ -419,8 +824,6 @@ const ConEdge = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         handleNavigation(brand.route);
-                        setMobileMenuOpen(false);
-                        setMobileSubBrandsDropdownOpen(false);
                       }}
                     >
                       {brand.name}
@@ -429,498 +832,462 @@ const ConEdge = () => {
                 </div>
               )}
             </div>
-
-            <a
-              href="#about"
+            <button
+              onClick={() => handleSmoothScroll("about")}
               className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
             >
               About
-            </a>
-            <a
-              href="#tools"
+            </button>
+            <button
+              onClick={() => handleSmoothScroll("tools")}
               className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
             >
               Tools
-            </a>
-            <a
-              href="#solutions"
+            </button>
+            <button
+              onClick={() => handleSmoothScroll("solutions")}
               className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
             >
               Solutions
-            </a>
-            <a
-              href="#why-choose"
+            </button>
+            <button
+              onClick={() => handleSmoothScroll("why-choose")}
               className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
             >
               Why Choose
-            </a>
-            <a
-              href="#cta"
+            </button>
+            <button
+              onClick={() => handleSmoothScroll("cta")}
               className="mobile-nav-link"
-              onClick={() => setMobileMenuOpen(false)}
             >
               Contact
-            </a>
+            </button>
           </nav>
         )}
       </header>
-
-      {/* Hero Section */}
-      <section id="top" style={styles.heroSection}>
-        <div style={styles.heroContent}>
-          <h1 style={styles.companyTitle}>8ConEdge</h1>
-          <p style={styles.heroSubtitle}>
-            Cutting-Edge Forex Tools for Trading Excellence
-          </p>
-          <p style={styles.heroDescription}>
-            Proprietary Forex tools and advanced trading systems designed to
-            enhance trading efficiency, maximize profits, and provide traders
-            with the competitive edge they need to succeed in the global
-            markets.
-          </p>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" style={styles.aboutSection}>
-        <div style={styles.container2}>
-          <h2 style={styles.sectionTitle}>Advanced Trading Technology</h2>
-          <p style={styles.aboutText}>
-            8ConEdge delivers{" "}
-            <strong style={styles.strongText}>
-              cutting-edge proprietary Forex tools
-            </strong>{" "}
-            that revolutionize the way traders analyze markets, execute trades,
-            and manage risk. Our advanced technology combines artificial
-            intelligence, real-time market analysis, and sophisticated
-            algorithms to provide traders with unparalleled insights and trading
-            advantages.
-          </p>
-          <div style={styles.statsGrid}>
-            <div style={styles.statCard}>
-              <div style={styles.statNumber}>95%</div>
-              <div style={styles.statLabel}>Accuracy Rate</div>
-            </div>
-            <div style={styles.statCard}>
-              <div style={styles.statNumber}>24/7</div>
-              <div style={styles.statLabel}>Market Monitoring</div>
-            </div>
-            <div style={styles.statCard}>
-              <div style={styles.statNumber}>500+</div>
-              <div style={styles.statLabel}>Active Traders</div>
-            </div>
+      <main>
+        {/* Hero Section */}
+        <section id="hero" ref={heroRef} style={styles.heroSection}>
+          <div style={styles.heroContent}>
+            <h1
+              style={styles.companyTitle}
+              className={`hero-title ${
+                animatedSections.has("hero") ? "animate" : ""
+              }`}
+            >
+              8ConEdge
+            </h1>
+            <p
+              style={styles.heroSubtitle}
+              className={`hero-subtitle ${
+                animatedSections.has("hero") ? "animate" : ""
+              }`}
+            >
+              Cutting-Edge Forex Tools for Trading Excellence
+            </p>
+            <p
+              style={styles.heroDescription}
+              className={`hero-description ${
+                animatedSections.has("hero") ? "animate" : ""
+              }`}
+            >
+              Proprietary Forex tools and advanced trading systems designed to
+              enhance trading efficiency, maximize profits, and provide traders
+              with the competitive edge they need to succeed in the global
+              markets.
+            </p>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Tools Section */}
-      <section id="tools" style={styles.toolsSection}>
-        <div style={styles.container2}>
-          <h2 style={{ ...styles.sectionTitle, color: "#ffffff" }}>
-            Our Proprietary Tools
-          </h2>
-          <div style={styles.toolsGrid}>
-            <div
-              style={styles.toolCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <BarChart3
-                size={40}
-                style={{ color: "#0edb61", marginBottom: "1rem" }}
-              />
-              <h3 style={styles.toolTitle}>Smart Market Analyzer</h3>
-              <p style={styles.toolDescription}>
-                AI-powered market analysis tool that identifies profitable
-                trading opportunities by analyzing multiple currency pairs
-                simultaneously.
-              </p>
-              <ul style={styles.toolFeatures}>
-                <li>• Real-time market scanning</li>
-                <li>• Pattern recognition algorithms</li>
-                <li>• Automated signal generation</li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.toolCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <Zap
-                size={40}
-                style={{ color: "#0edb61", marginBottom: "1rem" }}
-              />
-              <h3 style={styles.toolTitle}>Lightning Trade Executor</h3>
-              <p style={styles.toolDescription}>
-                Ultra-fast trade execution platform that ensures optimal entry
-                and exit points with minimal slippage and maximum efficiency.
-              </p>
-              <ul style={styles.toolFeatures}>
-                <li>• Sub-second execution speed</li>
-                <li>• Advanced order management</li>
-                <li>• Multi-broker compatibility</li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.toolCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <Shield
-                size={40}
-                style={{ color: "#0edb61", marginBottom: "1rem" }}
-              />
-              <h3 style={styles.toolTitle}>Risk Guardian Pro</h3>
-              <p style={styles.toolDescription}>
-                Comprehensive risk management system that protects your capital
-                through advanced position sizing and automated stop-loss
-                mechanisms.
-              </p>
-              <ul style={styles.toolFeatures}>
-                <li>• Dynamic position sizing</li>
-                <li>• Automated risk controls</li>
-                <li>• Portfolio protection alerts</li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.toolCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <Rocket
-                size={40}
-                style={{ color: "#0edb61", marginBottom: "1rem" }}
-              />
-              <h3 style={styles.toolTitle}>Profit Accelerator</h3>
-              <p style={styles.toolDescription}>
-                Advanced profit optimization engine that maximizes returns
-                through intelligent trade scaling and momentum-based position
-                management.
-              </p>
-              <ul style={styles.toolFeatures}>
-                <li>• Automated profit scaling</li>
-                <li>• Momentum indicators</li>
-                <li>• Performance optimization</li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.toolCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <Users
-                size={40}
-                style={{ color: "#0edb61", marginBottom: "1rem" }}
-              />
-              <h3 style={styles.toolTitle}>Social Trading Hub</h3>
-              <p style={styles.toolDescription}>
-                Connect with professional traders, copy successful strategies,
-                and learn from the best performers in our exclusive trading
-                community.
-              </p>
-              <ul style={styles.toolFeatures}>
-                <li>• Strategy copying</li>
-                <li>• Performance leaderboards</li>
-                <li>• Community insights</li>
-              </ul>
-            </div>
-
-            <div
-              style={styles.toolCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <Star
-                size={40}
-                style={{ color: "#0edb61", marginBottom: "1rem" }}
-              />
-              <h3 style={styles.toolTitle}>Elite Backtesting Engine</h3>
-              <p style={styles.toolDescription}>
-                Professional-grade backtesting platform that validates trading
-                strategies using historical data with institutional-level
-                accuracy and detail.
-              </p>
-              <ul style={styles.toolFeatures}>
-                <li>• Historical data analysis</li>
-                <li>• Strategy validation</li>
-                <li>• Performance metrics</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Solutions Section */}
-      <section id="solutions" style={styles.solutionsSection}>
-        <div style={styles.container2}>
-          <h2 style={styles.sectionTitle}>Trading Solutions for Every Level</h2>
-          <div style={styles.solutionsGrid}>
-            <div style={styles.solutionCard}>
-              <h3 style={styles.solutionTitle}>Beginner Trader Package</h3>
-              <p style={styles.solutionDescription}>
-                Perfect for new traders looking to start their Forex journey
-                with professional-grade tools and guidance.
-              </p>
-              <ul style={styles.solutionFeatures}>
-                <li>• Basic market analyzer access</li>
-                <li>• Educational trading modules</li>
-                <li>• Risk management tutorials</li>
-                <li>• Community forum access</li>
-              </ul>
+        {/* About Section */}
+        <section
+          id="about"
+          ref={aboutRef}
+          style={styles.aboutSection}
+          className={`slide-left ${
+            animatedSections.has("about") ? "animate" : ""
+          }`}
+        >
+          <div style={styles.container2}>
+            <h2 style={styles.sectionTitle}>Advanced Trading Technology</h2>
+            <p style={styles.aboutText}>
+              8ConEdge delivers{" "}
+              <strong style={styles.strongText}>
+                cutting-edge proprietary Forex tools
+              </strong>{" "}
+              that revolutionize the way traders analyze markets, execute
+              trades, and manage risk. Our advanced technology combines
+              artificial intelligence, real-time market analysis, and
+              sophisticated algorithms to provide traders with unparalleled
+              insights and trading advantages.
+            </p>
+            <div style={styles.statsGrid}>
               <div
-                style={styles.solutionButton}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#ff1f2c";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#0edb61";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
+                className={`stat-animate ${
+                  animatedSections.has("about") ? "animate" : ""
+                }`}
+                style={styles.statCard}
               >
-                Get Started
+                <div style={styles.statNumber}>95%</div>
+                <div style={styles.statLabel}>Accuracy Rate</div>
               </div>
-            </div>
-
-            <div style={styles.solutionCard}>
-              <h3 style={styles.solutionTitle}>Professional Trader Suite</h3>
-              <p style={styles.solutionDescription}>
-                Advanced tools for experienced traders who demand
-                institutional-level trading technology and analytics.
-              </p>
-              <ul style={styles.solutionFeatures}>
-                <li>• Full tool suite access</li>
-                <li>• Advanced market analysis</li>
-                <li>• Custom strategy development</li>
-                <li>• Priority customer support</li>
-              </ul>
               <div
-                style={styles.solutionButton}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#ff1f2c";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#0edb61";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
+                className={`stat-animate ${
+                  animatedSections.has("about") ? "animate" : ""
+                }`}
+                style={styles.statCard}
               >
-                Upgrade Now
+                <div style={styles.statNumber}>24/7</div>
+                <div style={styles.statLabel}>Market Monitoring</div>
               </div>
-            </div>
-
-            <div style={styles.solutionCard}>
-              <h3 style={styles.solutionTitle}>Enterprise Solutions</h3>
-              <p style={styles.solutionDescription}>
-                Custom trading solutions for institutions, hedge funds, and
-                professional trading firms.
-              </p>
-              <ul style={styles.solutionFeatures}>
-                <li>• Custom tool development</li>
-                <li>• API integration support</li>
-                <li>• Dedicated account management</li>
-                <li>• White-label solutions</li>
-              </ul>
               <div
-                style={styles.solutionButton}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#ff1f2c";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#0edb61";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
+                className={`stat-animate ${
+                  animatedSections.has("about") ? "animate" : ""
+                }`}
+                style={styles.statCard}
               >
-                Contact Sales
+                <div style={styles.statNumber}>500+</div>
+                <div style={styles.statLabel}>Active Traders</div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Why Choose Us Section */}
-      <section id="why-choose" style={styles.whyChooseSection}>
-        <div style={styles.container2}>
-          <h2 style={{ ...styles.sectionTitle, color: "#ffffff" }}>
-            Why Choose 8ConEdge?
-          </h2>
-          <div style={styles.benefitsGrid}>
-            <div
-              style={styles.benefitCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.borderColor = "#0edb61";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.borderColor = "transparent";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <h3 style={styles.benefitTitle}>Proprietary Technology</h3>
-              <p style={styles.benefitDescription}>
-                Our tools are built in-house by expert developers and traders,
-                ensuring unique features and competitive advantages not
-                available elsewhere.
-              </p>
-            </div>
-
-            <div
-              style={styles.benefitCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.borderColor = "#0edb61";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.borderColor = "transparent";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <h3 style={styles.benefitTitle}>Proven Performance</h3>
-              <p style={styles.benefitDescription}>
-                Track record of helping traders achieve consistent profitability
-                with tools tested and refined by professional traders in live
-                market conditions.
-              </p>
-            </div>
-
-            <div
-              style={styles.benefitCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.borderColor = "#0edb61";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.borderColor = "transparent";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <h3 style={styles.benefitTitle}>Continuous Innovation</h3>
-              <p style={styles.benefitDescription}>
-                Regular updates and new features based on market evolution and
-                user feedback, keeping you ahead of market trends and
-                opportunities.
-              </p>
-            </div>
-
-            <div
-              style={styles.benefitCard}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.borderColor = "#0edb61";
-                e.currentTarget.style.boxShadow =
-                  "0 12px 35px rgba(14, 219, 97, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.borderColor = "transparent";
-                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.1)";
-              }}
-            >
-              <h3 style={styles.benefitTitle}>Expert Support</h3>
-              <p style={styles.benefitDescription}>
-                24/7 technical support from trading professionals who understand
-                both the technology and the markets, ensuring you maximize your
-                trading potential.
-              </p>
+        {/* Tools Section */}
+        <section
+          id="tools"
+          ref={toolsRef}
+          style={styles.toolsSection}
+          className={` ${animatedSections.has("tools") ? "animate" : ""}`}
+        >
+          <div style={styles.container2}>
+            <h2 style={{ ...styles.sectionTitle, color: "#ffffff" }}>
+              Our Proprietary Tools
+            </h2>
+            <div style={styles.toolsGrid}>
+              {[
+                {
+                  icon: (
+                    <BarChart3
+                      size={40}
+                      style={{ color: "#0edb61", marginBottom: "1rem" }}
+                    />
+                  ),
+                  title: "Smart Market Analyzer",
+                  description:
+                    "AI-powered market analysis tool that identifies profitable trading opportunities by analyzing multiple currency pairs simultaneously.",
+                  features: [
+                    "• Real-time market scanning",
+                    "• Pattern recognition algorithms",
+                    "• Automated signal generation",
+                  ],
+                },
+                {
+                  icon: (
+                    <Zap
+                      size={40}
+                      style={{ color: "#0edb61", marginBottom: "1rem" }}
+                    />
+                  ),
+                  title: "Lightning Trade Executor",
+                  description:
+                    "Ultra-fast trade execution platform that ensures optimal entry and exit points with minimal slippage and maximum efficiency.",
+                  features: [
+                    "• Sub-second execution speed",
+                    "• Advanced order management",
+                    "• Multi-broker compatibility",
+                  ],
+                },
+                {
+                  icon: (
+                    <Shield
+                      size={40}
+                      style={{ color: "#0edb61", marginBottom: "1rem" }}
+                    />
+                  ),
+                  title: "Risk Guardian Pro",
+                  description:
+                    "Comprehensive risk management system that protects your capital through advanced position sizing and automated stop-loss mechanisms.",
+                  features: [
+                    "• Dynamic position sizing",
+                    "• Automated risk controls",
+                    "• Portfolio protection alerts",
+                  ],
+                },
+                {
+                  icon: (
+                    <Rocket
+                      size={40}
+                      style={{ color: "#0edb61", marginBottom: "1rem" }}
+                    />
+                  ),
+                  title: "Profit Accelerator",
+                  description:
+                    "Advanced profit optimization engine that maximizes returns through intelligent trade scaling and momentum-based position management.",
+                  features: [
+                    "• Automated profit scaling",
+                    "• Momentum indicators",
+                    "• Performance optimization",
+                  ],
+                },
+                {
+                  icon: (
+                    <Users
+                      size={40}
+                      style={{ color: "#0edb61", marginBottom: "1rem" }}
+                    />
+                  ),
+                  title: "Social Trading Hub",
+                  description:
+                    "Connect with professional traders, copy successful strategies, and learn from the best performers in our exclusive trading community.",
+                  features: [
+                    "• Strategy copying",
+                    "• Performance leaderboards",
+                    "• Community insights",
+                  ],
+                },
+                {
+                  icon: (
+                    <Star
+                      size={40}
+                      style={{ color: "#0edb61", marginBottom: "1rem" }}
+                    />
+                  ),
+                  title: "Elite Backtesting Engine",
+                  description:
+                    "Professional-grade backtesting platform that validates trading strategies using historical data with institutional-level accuracy and detail.",
+                  features: [
+                    "• Historical data analysis",
+                    "• Strategy validation",
+                    "• Performance metrics",
+                  ],
+                },
+              ].map((tool, index) => (
+                <div
+                  key={index}
+                  style={styles.toolCard}
+                  className={`tool-card stagger-item ${
+                    animatedSections.has("tools") ? "animate" : ""
+                  }`}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform =
+                      "translateY(-5px) scale(1.02)";
+                    e.currentTarget.style.boxShadow =
+                      "0 15px 40px rgba(14, 219, 97, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0) scale(1)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 25px rgba(0,0,0,0.1)";
+                  }}
+                >
+                  {tool.icon}
+                  <h3 style={styles.toolTitle}>{tool.title}</h3>
+                  <p style={styles.toolDescription}>{tool.description}</p>
+                  <ul style={styles.toolFeatures}>
+                    {tool.features.map((feature, idx) => (
+                      <li key={idx}>{feature}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section id="cta" style={styles.ctaSection}>
-        <div style={styles.container2}>
-          <h2 style={styles.ctaTitle}>Ready to Gain Your Trading Edge?</h2>
-          <p style={styles.ctaDescription}>
-            Join thousands of successful traders who have transformed their
-            trading performance with 8ConEdge. Our proprietary tools provide the
-            competitive advantage you need to excel in today's fast-paced Forex
-            markets. Start your journey to consistent profitability today.
-          </p>
-          <div
-            style={styles.ctaHighlight}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#ff1f2c";
-              e.currentTarget.style.borderColor = "#ff1f2c";
-              e.currentTarget.style.transform = "translateY(-3px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "#0edb61";
-              e.currentTarget.style.borderColor = "#0edb61";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
-          >
-            <strong>
-              Start Your Free Trial Today - Experience the 8ConEdge Advantage!
-            </strong>
+        {/* Solutions Section */}
+        <section
+          id="solutions"
+          ref={solutionsRef}
+          style={styles.solutionsSection}
+          className={` ${animatedSections.has("solutions") ? "animate" : ""}`}
+        >
+          <div style={styles.container2}>
+            <h2 style={styles.sectionTitle}>
+              Trading Solutions for Every Level
+            </h2>
+            <div style={styles.solutionsGrid}>
+              {[
+                {
+                  title: "Beginner Trader Package",
+                  description:
+                    "Perfect for new traders looking to start their Forex journey with professional-grade tools and guidance.",
+                  features: [
+                    "• Basic market analyzer access",
+                    "• Educational trading modules",
+                    "• Risk management tutorials",
+                    "• Community forum access",
+                  ],
+                  buttonText: "Get Started",
+                },
+                {
+                  title: "Professional Trader Suite",
+                  description:
+                    "Advanced tools for experienced traders who demand institutional-level trading technology and analytics.",
+                  features: [
+                    "• Full tool suite access",
+                    "• Advanced market analysis",
+                    "• Custom strategy development",
+                    "• Priority customer support",
+                  ],
+                  buttonText: "Upgrade Now",
+                },
+                {
+                  title: "Enterprise Solutions",
+                  description:
+                    "Custom trading solutions for institutions, hedge funds, and professional trading firms.",
+                  features: [
+                    "• Custom tool development",
+                    "• API integration support",
+                    "• Dedicated account management",
+                    "• White-label solutions",
+                  ],
+                  buttonText: "Contact Sales",
+                },
+              ].map((solution, index) => (
+                <div
+                  key={index}
+                  style={styles.solutionCard}
+                  className={`tool-card stagger-item ${
+                    animatedSections.has("solutions") ? "animate" : ""
+                  }`}
+                >
+                  <h3 style={styles.solutionTitle}>{solution.title}</h3>
+                  <p style={styles.solutionDescription}>
+                    {solution.description}
+                  </p>
+                  <ul style={styles.solutionFeatures}>
+                    {solution.features.map((feature, idx) => (
+                      <li key={idx}>{feature}</li>
+                    ))}
+                  </ul>
+                  <div
+                    style={styles.solutionButton}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#ff1f2c";
+                      e.currentTarget.style.transform =
+                        "translateY(-2px) scale(1.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#0edb61";
+                      e.currentTarget.style.transform =
+                        "translateY(0) scale(1)";
+                    }}
+                  >
+                    {solution.buttonText}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Why Choose Us Section */}
+        <section
+          id="why-choose"
+          ref={whyChooseRef}
+          style={styles.whyChooseSection}
+          className={` ${animatedSections.has("why-choose") ? "animate" : ""}`}
+        >
+          <div style={styles.container2}>
+            <h2 style={{ ...styles.sectionTitle, color: "#ffffff" }}>
+              Why Choose 8ConEdge?
+            </h2>
+            <div style={styles.benefitsGrid}>
+              {[
+                {
+                  title: "Proprietary Technology",
+                  description:
+                    "Our tools are built in-house by expert developers and traders, ensuring unique features and competitive advantages not available elsewhere.",
+                },
+                {
+                  title: "Proven Performance",
+                  description:
+                    "Track record of helping traders achieve consistent profitability with tools tested and refined by professional traders in live market conditions.",
+                },
+                {
+                  title: "Continuous Innovation",
+                  description:
+                    "Regular updates and new features based on market evolution and user feedback, keeping you ahead of market trends and opportunities.",
+                },
+                {
+                  title: "Expert Support",
+                  description:
+                    "24/7 technical support from trading professionals who understand both the technology and the markets, ensuring you maximize your trading potential.",
+                },
+              ].map((benefit, index) => (
+                <div
+                  key={index}
+                  style={styles.benefitCard}
+                  className={`benefit-card stagger-item ${
+                    animatedSections.has("why-choose") ? "animate" : ""
+                  }`}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform =
+                      "translateY(-8px) rotateY(5deg)";
+                    e.currentTarget.style.borderColor = "#0edb61";
+                    e.currentTarget.style.boxShadow =
+                      "0 15px 40px rgba(14, 219, 97, 0.25)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform =
+                      "translateY(0) rotateY(0deg)";
+                    e.currentTarget.style.borderColor = "transparent";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 25px rgba(0,0,0,0.1)";
+                  }}
+                >
+                  <h3 style={styles.benefitTitle}>{benefit.title}</h3>
+                  <p style={styles.benefitDescription}>{benefit.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section
+          id="cta"
+          ref={ctaRef}
+          style={styles.ctaSection}
+          className={`pulse-in ${animatedSections.has("cta") ? "animate" : ""}`}
+        >
+          <div style={styles.container2}>
+            <h2 style={styles.ctaTitle}>Ready to Gain Your Trading Edge?</h2>
+            <p style={styles.ctaDescription}>
+              Join thousands of successful traders who have transformed their
+              trading performance with 8ConEdge. Our proprietary tools provide
+              the competitive advantage you need to excel in today's fast-paced
+              Forex markets. Start your journey to consistent profitability
+              today.
+            </p>
+            <div
+              style={styles.ctaHighlight}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#ff1f2c";
+                e.currentTarget.style.borderColor = "#ff1f2c";
+                e.currentTarget.style.transform =
+                  "translateY(-3px) scale(1.02)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#0edb61";
+                e.currentTarget.style.borderColor = "#0edb61";
+                e.currentTarget.style.transform = "translateY(0) scale(1)";
+              }}
+            >
+              <strong>
+                Start Your Free Trial Today - Experience the 8ConEdge Advantage!
+              </strong>
+            </div>
+          </div>
+        </section>
+      </main>
+      <ScrollUp />
     </div>
   );
 };
 
-// Updated styling with color palette
+// Clean responsive styling approach matching ConCise
 const styles = {
   container: {
     minHeight: "100vh",
@@ -958,6 +1325,8 @@ const styles = {
     fontWeight: "700",
     marginBottom: "1rem",
     textShadow: "0 4px 8px rgba(0,0,0,0.3)",
+    filter:
+      "drop-shadow(0 0 5px #121411) drop-shadow(0 0 10px #121411) drop-shadow(0 0 15px #121411)",
     color: "#ffffff",
   },
 
@@ -980,7 +1349,7 @@ const styles = {
 
   aboutSection: {
     background: "#ffffff",
-    padding: "120px 20px 80px",
+    padding: "80px 20px",
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
@@ -1024,7 +1393,7 @@ const styles = {
   },
 
   statNumber: {
-    fontSize: "3rem",
+    fontSize: "clamp(2rem, 5vw, 3rem)",
     fontWeight: "bold",
     color: "#0edb61",
     marginBottom: "0.5rem",
@@ -1032,13 +1401,13 @@ const styles = {
 
   statLabel: {
     fontSize: "1.1rem",
-    color: "#000000",
+    color: "#ffffff",
     fontWeight: "600",
   },
 
   toolsSection: {
     background: "#000000",
-    padding: "120px 20px 80px",
+    padding: "80px 20px",
     minHeight: "100vh",
     display: "flex",
     flexDirection: "column",
@@ -1086,7 +1455,7 @@ const styles = {
 
   solutionsSection: {
     background: "#ffffff",
-    padding: "120px 20px 80px",
+    padding: "80px 20px",
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
@@ -1141,7 +1510,7 @@ const styles = {
 
   whyChooseSection: {
     background: "#000000",
-    padding: "120px 20px 80px",
+    padding: "80px 20px",
     minHeight: "100vh",
     display: "flex",
     alignItems: "center",
@@ -1181,7 +1550,7 @@ const styles = {
   ctaSection: {
     background: "#ffffff",
     color: "#000000",
-    padding: "120px 20px 80px",
+    padding: "80px 20px",
     textAlign: "center",
     minHeight: "100vh",
     display: "flex",
