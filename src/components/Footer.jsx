@@ -1,4 +1,5 @@
 import React from "react";
+import "../App.css";
 import {
   Facebook,
   Linkedin,
@@ -140,6 +141,596 @@ const Footer = () => {
           </div>
         </div>
       </div>
+      <style>{`.footer {
+  background-color: #000000;
+  color: white;
+  padding: 32px 16px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 5px;
+}
+
+.footer-logo img {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+}
+
+.footer-description {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.footer-title {
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.footer-list {
+  list-style: none;
+  padding: 0;
+  font-size: 14px;
+}
+
+.footer-list li {
+  margin-bottom: 8px;
+}
+
+.quick-link,
+.program-link {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.footer-social a {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+.fb-link:hover {
+  color: #1877f2;
+}
+.ig-link:hover {
+  color: #d62976;
+}
+.li-link:hover {
+  color: #0077b5;
+}
+.quick-link:hover {
+  color: #0edb61;
+}
+.program-link:hover {
+  color: #ff1f2c;
+}
+
+.footer-contact-info {
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.footer-contact-info p {
+  margin-bottom: 8px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.footer-bottom {
+  border-top: 1px solid #ccc;
+  margin-top: 32px;
+  padding-top: 24px;
+  text-align: center;
+}
+
+.footer-bottom-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  color: #d1d5db;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 16px;
+}
+
+.scroll-to-top-button {
+  position: fixed;
+  right: 20px;
+  padding: 12px 16px;
+  font-size: 16px;
+  background-color: #0edb61;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease,
+    transform 0.4s ease;
+}
+.scroll-to-top-button .chevron-icon {
+  color: #000000;
+  transition: color 0.4s ease;
+}
+
+.scroll-to-top-button:hover {
+  background-color: #ff1f2c;
+  box-shadow: 0 0 12px #990f17, 0 0 24px #990f17;
+}
+
+.scroll-to-top-button:hover .chevron-icon {
+  color: #ffffff;
+}
+@media (min-width: 2560px) {
+  .logo-img {
+    height: clamp(40px, 3vw, 80px);
+    width: auto;
+  }
+
+  .nav-link {
+    font-size: clamp(14px, 1vw, 30px);
+  }
+
+  .dropdown-content a {
+    font-size: clamp(14px, 1vw, 18px);
+  }
+
+  .card-container {
+    max-width: 1000px;
+  }
+
+  .feature-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+  }
+
+  .faq-section {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 100px 10%;
+  }
+
+  .footer {
+    padding: 60px 10%;
+    font-size: 18px;
+  }
+}
+@media (max-width: 1024px) {
+  .desktop-nav {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .nav-link {
+    font-family: "Montserrat", sans-serif;
+    font-size: 9.5px;
+  }
+
+  .logo-img {
+    height: 30px;
+    width: 100%;
+  }
+
+  .contact-content {
+    flex-direction: column;
+  }
+
+  .footer-bottom-content {
+    flex-direction: column;
+  }
+
+  .footer-bottom-links {
+    margin-top: 16px;
+  }
+
+  .carousel-button-prev {
+    left: -20px;
+  }
+
+  .carousel-button-next {
+    right: -20px;
+  }
+
+  .core-brand-content {
+    grid-template-columns: 1fr;
+    gap: 60px;
+    margin-bottom: 80px;
+  }
+
+  .core-brand-features,
+  .core-brand-cta {
+    padding: 32px;
+  }
+
+  .core-brand-header {
+    margin-bottom: 60px;
+  }
+}
+@media (min-width: 1024px) {
+  .intcards-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    justify-items: center;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .intcard {
+    width: 300px;
+    height: 400px;
+  }
+
+  .intcard .intcontent {
+    padding: 25px;
+  }
+
+  .intcard-title {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
+
+  .intcard-description {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+  }
+  .desktop-nav {
+    display: flex;
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+  }
+
+  .contact-content {
+    flex-direction: row;
+  }
+
+  .footer-bottom-content {
+    flex-direction: row;
+  }
+
+  .footer-bottom-links {
+    margin-top: 0;
+  }
+  .footer-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+@media (max-width: 768px) {
+  @media (max-width: 768px) {
+    .intcard .intcontent {
+      width: 100%;
+      height: auto;
+    }
+
+    .card-container {
+      order: 4;
+    }
+  }
+  .mvv-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 60px;
+  }
+
+  .mvv-card {
+    padding: 30px 20px;
+  }
+
+  .about-main-title {
+    font-size: 2.5rem;
+  }
+
+  .search-input:focus,
+  .search-input.expanded {
+    z-index: 999;
+    width: 150px;
+  }
+
+  .faq-list {
+    grid-template-columns: 1fr; /* <== DELETE this */
+  }
+  .testimonials-section {
+    padding: 3rem 0;
+  }
+
+  .testimonials-container {
+    padding: 0 1rem;
+  }
+
+  .testimonials-header {
+    margin-bottom: 3rem;
+  }
+
+  .carousel-button {
+    width: 50px;
+    height: 50px;
+  }
+
+  .carousel-button-prev {
+    left: -10px;
+  }
+
+  .carousel-button-next {
+    right: -10px;
+  }
+
+  .testimonial-card {
+    border-radius: 20px;
+  }
+
+  .testimonial-text {
+    font-size: 1.2rem;
+  }
+
+  .testimonial-footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .intcards-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .internship-title h1,
+  .careerpath-title h1 {
+    font-size: 2rem;
+  }
+
+  .core-brand-section {
+    padding: 60px 20px;
+  }
+}
+@media (max-width: 480px) {
+  .intcards-container,
+  .careerpath-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 340px;
+    width: 100%;
+  }
+
+  .intcard,
+  .career-card {
+    width: 100%;
+    max-width: 320px;
+    justify-self: center;
+  }
+
+  .internship-title h1,
+  .careerpath-title h1 {
+    font-size: 2.5rem;
+  }
+
+  .internship-title p,
+  .careerpath-title p {
+    font-size: 1rem;
+  }
+  .core-brand-section {
+    padding: 30px 8px;
+  }
+
+  .core-brand-container {
+    padding: 0 8px;
+  }
+
+  .core-brand-content-wrapper {
+    gap: 25px;
+    margin-top: 15px;
+  }
+
+  .core-brand-title {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .core-brand-description {
+    font-size: 15px;
+    padding: 0 0.5rem;
+  }
+
+  .core-brand-list {
+    padding: 0.8rem 1rem;
+    margin: 0.8rem auto;
+  }
+
+  .core-brand-list li {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .core-brand-list li::before {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    font-size: 14px;
+  }
+
+  /* Testimonials for mobile */
+  .testimonials-section {
+    padding: 1rem 0;
+  }
+
+  .testimonials-container {
+    padding: 0;
+  }
+
+  .testimonials-carousel {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .carousel-button-prev,
+  .carousel-button-next {
+    position: static;
+    margin: 0 auto;
+    order: 2;
+  }
+
+  .testimonials-track {
+    order: 1;
+    width: 100%;
+  }
+
+  .carousel-indicators {
+    order: 3;
+    margin-top: 1rem;
+  }
+
+  .testimonial-card {
+    min-height: 250px;
+  }
+
+  .testimonial-text {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+  }
+
+  .testimonial-footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.8rem;
+  }
+
+  .testimonial-avatar img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .testimonial-author {
+    font-size: 1rem;
+  }
+
+  .carousel-indicators {
+    gap: 0.5rem;
+  }
+
+  .indicator {
+    width: 10px;
+    height: 10px;
+  }
+}
+@media (max-width: 320px) {
+  .testimonials-container {
+    padding: 0;
+  }
+
+  .testimonial-card {
+    margin: 0;
+    border-radius: 16px;
+  }
+
+  .testimonials-track {
+    border-radius: 16px;
+  }
+
+  .core-brand-list li {
+    font-size: 12px;
+  }
+
+  .core-brand-title {
+    font-size: 22px;
+  }
+
+  .intapply-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  .footer-title {
+    text-align: center;
+  }
+  .footer-logo {
+    align-items: center;
+    justify-content: center;
+  }
+  .footer-contact-info p {
+    text-align: center;
+  }
+  .footer-social {
+    align-items: center;
+    justify-content: center;
+  }
+}
+@media (max-width: 426px) {
+  .sub-brand-grid {
+    grid-template-columns: 1fr; /* Switch to one column */
+  }
+  .quick-link a {
+    text-align: center;
+  }
+  .footer-title {
+    text-align: center;
+  }
+  .footer-logo {
+    align-items: center;
+    justify-content: center;
+  }
+  .footer-contact-info p {
+    text-align: center;
+  }
+  .footer-social {
+    align-items: center;
+    justify-content: center;
+  }
+}
+@media (max-width: 768px) {
+  .sub-brand-grid {
+    grid-template-columns: 1fr; /* Switch to one column */
+  }
+  .quick-link,
+  .program-link {
+    align-items: center;
+    justify-content: center;
+  }
+  .footer-title {
+    text-align: center;
+  }
+  .footer-logo {
+    align-items: center;
+    justify-content: center;
+  }
+  .footer-contact-info p {
+    text-align: center;
+  }
+  .footer-social {
+    align-items: center;
+    justify-content: center;
+  }
+}`}</style>
     </footer>
   );
 };

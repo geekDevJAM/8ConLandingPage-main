@@ -10,7 +10,7 @@ const CareerPathSection = () => {
     {
       title: "WORKSHOP SPEAKER",
       description:
-        "You learned with Confluence, now you teach it. As a certified Forex Coach, lead classes, mentor juniors, and guide new traders. Qualification: core competency completion, coaching evaluation, and a mock teaching session.",
+        "You traded with purpose, now you teach with it. As a Workshop Speaker, lead webinars, represent 8Con in events, and share your story. Qualification: Journal excellence, strong communication, and final interview.",
     },
     {
       title: "FOREX INSTRUCTOR",
